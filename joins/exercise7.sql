@@ -95,8 +95,6 @@ VALUES (0, 'GUEST', 'GUEST', 'GUEST', 0, '(000) 000-0000', NULL, '2012-07-01 00:
         '2012-08-19 14:55:55'),
        (21, 'Mackenzie', 'Anna', '64 Perkington Lane, Reading', 64577, '(822) 661-2898', 1, '2012-08-26 09:32:05');
 
-COMMIT;
-
 WITH booking_costs AS (
     SELECT
         CONCAT(mems.firstname, ' ', mems.surname) AS member,

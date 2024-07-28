@@ -58,8 +58,6 @@ VALUES (0, 'Tennis Court 1', 5, 25, 10000, 200),
        (7, 'Snooker Table', 0, 5, 450, 15),
        (8, 'Pool Table', 0, 5, 400, 15);
 
-COMMIT;
-
 SELECT f.name,
        SUM(CASE
                WHEN b.mem_id = 0 THEN b.slots * f.guest_cost

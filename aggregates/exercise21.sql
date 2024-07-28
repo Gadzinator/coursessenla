@@ -58,8 +58,6 @@ VALUES (0, 'Tennis Court 1', 5, 25, 10000, 200),
        (7, 'Snooker Table', 0, 5, 450, 15),
        (8, 'Pool Table', 0, 5, 400, 15);
 
-COMMIT;
-
 SELECT f.name,
        f.initial_outlay / (SUM(CASE
                                    WHEN mem_id = 0 THEN slots * guest_cost

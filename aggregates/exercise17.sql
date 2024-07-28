@@ -37,8 +37,6 @@ VALUES (3, 1, '2012-07-03 11:00:00', 2),
        (7, 2, '2012-07-05 18:30:00', 2),
        (8, 3, '2012-07-05 12:30:00', 1);
 
-COMMIT;
-
 SELECT fac_id, SUM(slots) AS total
 FROM cd.bookings
 GROUP BY fac_id
