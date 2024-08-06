@@ -62,9 +62,4 @@ VALUES ('FirstName1', 'LastName1', 1),
        ('FirstName48', 'LastName48', 48),
        ('FirstName49', 'LastName49', 49),
        ('FirstName50', 'LastName50', 50);
---rollback delete from profile where first_name in ('FirstName1', 'FirstName2', 'FirstName3', 'FirstName4', 'FirstName5', 'FirstName6', 'FirstName7',
--- 'FirstName8', 'FirstName9', 'FirstName10', 'FirstName11', 'FirstName12', 'FirstName13', 'FirstName14', 'FirstName15', 'FirstName16', 'FirstName17',
--- 'FirstName18', 'FirstName19', 'FirstName20', 'FirstName21', 'FirstName22', 'FirstName23', 'FirstName24', 'FirstName25', 'FirstName26',
--- 'FirstName27', 'FirstName28', 'FirstName29', 'FirstName30', 'FirstName31', 'FirstName32', 'FirstName33', 'FirstName34', 'FirstName35',
--- 'FirstName36', 'FirstName37', 'FirstName38', 'FirstName39', 'FirstName40', 'FirstName41', 'FirstName42', 'FirstName43', 'FirstName44',
--- 'FirstName45', 'FirstName46', 'FirstName47', 'FirstName48', 'FirstName49', 'FirstName50');
+--rollback truncate profile;

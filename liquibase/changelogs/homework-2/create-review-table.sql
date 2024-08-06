@@ -64,11 +64,4 @@ VALUES ('Review content 1', 8.0, 1, 1),
        ('Review content 48', 8.0, 48, 48),
        ('Review content 49', 7.5, 49, 49),
        ('Review content 50', 6.5, 50, 50);
---rollback delete from user where review_content in ('Review content 1', 'Review content 2', 'Review content 3', 'Review content 4',
--- 'Review content 5', 'Review content 6', 'Review content 7', 'Review content 8', 'Review content 9', 'Review content 10', 'Review content 11',
--- 'Review content 12', 'Review content 13', 'Review content 14', 'Review content 15', 'Review content 16', 'Review content 17', 'Review content 18',
--- 'Review content 19', 'Review content 20', 'Review content 21', 'Review content 22', 'Review content 23', 'Review content 24', 'Review content 25',
--- 'Review content 26', 'Review content 27', 'Review content 28', 'Review content 29', 'Review content 30', 'Review content 31', 'Review content 32',
--- 'Review content 33', 'Review content 34', 'Review content 35', 'Review content 36', 'Review content 37', 'Review content 38', 'Review content 39',
--- 'Review content 40', 'Review content 41', 'Review content 42', 'Review content 43', 'Review content 44', 'Review content 45', 'Review content 46',
--- 'Review content 47', 'Review content 48', 'Review content 49', 'Review content 50');
+--rollback truncate review;

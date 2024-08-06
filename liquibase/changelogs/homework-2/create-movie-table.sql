@@ -62,8 +62,4 @@ VALUES ('title1', 'Description of Movie1', '2024-01-01', 7.5),
        ('Movie48', 'Description of Movie48', '2024-02-17', 7.0),
        ('Movie49', 'Description of Movie49', '2024-02-18', 6.5),
        ('Movie50', 'Description of Movie50', '2024-02-19', 8.0);
---rollback delete from user where title in ('Movie1', 'Movie2', 'Movie3', 'Movie4', 'Movie5', 'Movie6', 'Movie7', 'Movie8', 'Movie9', 'Movie10',
--- 'Movie11', 'Movie12', 'Movie13', 'Movie14', 'Movie15', 'Movie16', 'Movie17', 'Movie18', 'Movie19', 'Movie20', 'Movie21', 'Movie22', 'Movie23',
--- 'Movie24', 'Movie25', 'Movie26', 'Movie27', 'Movie28', 'Movie29', 'Movie30', 'Movie31', 'Movie32', 'Movie33', 'Movie34', 'Movie35', 'Movie36',
--- 'Movie37', 'Movie38', 'Movie39', 'Movie40', 'Movie41', 'Movie42', 'Movie43', 'Movie44', 'Movie45', 'Movie46', 'Movie47', 'Movie48', 'Movie49',
--- 'Movie50');
+--rollback truncate movie;
