@@ -1,0 +1,65 @@
+--liquibase formatted sql
+--changeset Grigorev Alexei:create_profile_table
+CREATE TABLE profile
+(
+    id         bigserial PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name  VARCHAR(50) NOT NULL,
+    user_id    bigint      NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES "user" (id)
+);
+--rollback drop table profile
+
+----changeset Grigorev Alexei:insert_profile_table
+INSERT INTO profile (first_name, last_name, user_id)
+VALUES ('FirstName1', 'LastName1', 1),
+       ('FirstName2', 'LastName2', 2),
+       ('FirstName3', 'LastName3', 3),
+       ('FirstName4', 'LastName4', 4),
+       ('FirstName5', 'LastName5', 5),
+       ('FirstName6', 'LastName6', 6),
+       ('FirstName7', 'LastName7', 7),
+       ('FirstName8', 'LastName8', 8),
+       ('FirstName9', 'LastName9', 9),
+       ('FirstName10', 'LastName10', 10),
+       ('FirstName11', 'LastName11', 11),
+       ('FirstName12', 'LastName12', 12),
+       ('FirstName13', 'LastName13', 13),
+       ('FirstName14', 'LastName14', 14),
+       ('FirstName15', 'LastName15', 15),
+       ('FirstName16', 'LastName16', 16),
+       ('FirstName17', 'LastName17', 17),
+       ('FirstName18', 'LastName18', 18),
+       ('FirstName19', 'LastName19', 19),
+       ('FirstName20', 'LastName20', 20),
+       ('FirstName21', 'LastName21', 21),
+       ('FirstName22', 'LastName22', 22),
+       ('FirstName23', 'LastName23', 23),
+       ('FirstName24', 'LastName24', 24),
+       ('FirstName25', 'LastName25', 25),
+       ('FirstName26', 'LastName26', 26),
+       ('FirstName27', 'LastName27', 27),
+       ('FirstName28', 'LastName28', 28),
+       ('FirstName29', 'LastName29', 29),
+       ('FirstName30', 'LastName30', 30),
+       ('FirstName31', 'LastName31', 31),
+       ('FirstName32', 'LastName32', 32),
+       ('FirstName33', 'LastName33', 33),
+       ('FirstName34', 'LastName34', 34),
+       ('FirstName35', 'LastName35', 35),
+       ('FirstName36', 'LastName36', 36),
+       ('FirstName37', 'LastName37', 37),
+       ('FirstName38', 'LastName38', 38),
+       ('FirstName39', 'LastName39', 39),
+       ('FirstName40', 'LastName40', 40),
+       ('FirstName41', 'LastName41', 41),
+       ('FirstName42', 'LastName42', 42),
+       ('FirstName43', 'LastName43', 43),
+       ('FirstName44', 'LastName44', 44),
+       ('FirstName45', 'LastName45', 45),
+       ('FirstName46', 'LastName46', 46),
+       ('FirstName47', 'LastName47', 47),
+       ('FirstName48', 'LastName48', 48),
+       ('FirstName49', 'LastName49', 49),
+       ('FirstName50', 'LastName50', 50);
+--rollback truncate profile;

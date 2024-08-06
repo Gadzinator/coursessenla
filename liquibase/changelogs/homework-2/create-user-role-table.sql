@@ -1,0 +1,67 @@
+--liquibase formatted sql
+--changeset Grigorev Alexei:create_user_role_table
+CREATE TABLE user_role
+(
+    user_id bigint NOT NULL,
+    role_id bigint NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES "user" (id),
+    FOREIGN KEY (role_id) REFERENCES role (id)
+);
+--rollback drop table user_role
+
+--changeset Grigorev Alexei:insert_user_role_table
+INSERT INTO user_role (user_id, role_id)
+VALUES (1, 1),
+       (2, 2),
+       (3, 1),
+       (4, 2),
+       (5, 1),
+       (6, 2),
+       (7, 1),
+       (8, 2),
+       (9, 1),
+       (10, 2),
+       (11, 1),
+       (12, 2),
+       (13, 1),
+       (14, 2),
+       (15, 1),
+       (16, 2),
+       (17, 1),
+       (18, 2),
+       (19, 1),
+       (20, 2),
+       (21, 1),
+       (22, 2),
+       (23, 1),
+       (24, 2),
+       (25, 1),
+       (26, 2),
+       (27, 1),
+       (28, 2),
+       (29, 1),
+       (30, 2),
+       (31, 1),
+       (32, 2),
+       (33, 1),
+       (34, 2),
+       (35, 1),
+       (36, 2),
+       (37, 1),
+       (38, 2),
+       (39, 1),
+       (40, 2),
+       (41, 1),
+       (42, 2),
+       (43, 1),
+       (44, 2),
+       (45, 1),
+       (46, 2),
+       (47, 1),
+       (48, 2),
+       (49, 1),
+       (50, 2);
+--rollback delete from user_role where user_id in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18',
+-- '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42',
+-- '43', '44', '45', '46', '47', '48', '49', '50');
