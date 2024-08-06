@@ -1,0 +1,67 @@
+--liquibase formatted sql
+--changeset Grigorev Alexei:create_movie_genre_table
+CREATE TABLE movie_genre
+(
+    movie_id bigint NOT NULL,
+    genre_id bigint NOT NULL,
+    PRIMARY KEY (movie_id, genre_id),
+    FOREIGN KEY (movie_id) REFERENCES movie (id),
+    FOREIGN KEY (genre_id) REFERENCES genre (id)
+);
+--rollback drop table movie_genre
+
+--changeset Grigorev Alexei:insert_movie_genre_table
+INSERT INTO movie_genre (movie_id, genre_id)
+VALUES (1, 1),
+       (2, 2),
+       (3, 3),
+       (4, 4),
+       (5, 5),
+       (6, 6),
+       (7, 7),
+       (8, 8),
+       (9, 9),
+       (10, 10),
+       (11, 11),
+       (12, 12),
+       (13, 13),
+       (14, 14),
+       (15, 15),
+       (16, 16),
+       (17, 17),
+       (18, 18),
+       (19, 19),
+       (20, 20),
+       (21, 1),
+       (22, 2),
+       (23, 3),
+       (24, 4),
+       (25, 5),
+       (26, 6),
+       (27, 7),
+       (28, 8),
+       (29, 9),
+       (30, 10),
+       (31, 11),
+       (32, 12),
+       (33, 13),
+       (34, 14),
+       (35, 15),
+       (36, 16),
+       (37, 17),
+       (38, 18),
+       (39, 19),
+       (40, 20),
+       (41, 1),
+       (42, 2),
+       (43, 3),
+       (44, 4),
+       (45, 5),
+       (46, 6),
+       (47, 7),
+       (48, 8),
+       (49, 9),
+       (50, 10);
+--rollback delete from movie_genre where movie_id in ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+-- '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41',
+-- '42', '43', '44', '45', '46', '47', '48', '49', '50');

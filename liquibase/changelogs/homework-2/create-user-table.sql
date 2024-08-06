@@ -1,0 +1,68 @@
+--liquibase formatted sql
+--changeset Grigorev Alexei:create_user_table
+CREATE TABLE "user"
+(
+    id       bigserial PRIMARY KEY,
+    username VARCHAR(50)  NOT NULL,
+    email    VARCHAR(30)  NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+--rollback drop table user
+
+----changeset Grigorev Alexei:insert_user_table
+INSERT INTO "user" (username, email, password)
+VALUES ('Client1', 'client1@example.com', 'password1'),
+       ('Client2', 'client2@example.com', 'password2'),
+       ('Client3', 'client3@example.com', 'password3'),
+       ('Client4', 'client4@example.com', 'password4'),
+       ('Client5', 'client5@example.com', 'password5'),
+       ('Client6', 'client6@example.com', 'password6'),
+       ('Client7', 'client7@example.com', 'password7'),
+       ('Client8', 'client8@example.com', 'password8'),
+       ('Client9', 'client9@example.com', 'password9'),
+       ('Client10', 'client10@example.com', 'password10'),
+       ('Client11', 'client11@example.com', 'password11'),
+       ('Client12', 'client12@example.com', 'password12'),
+       ('Client13', 'client13@example.com', 'password13'),
+       ('Client14', 'client14@example.com', 'password14'),
+       ('Client15', 'client15@example.com', 'password15'),
+       ('Client16', 'client16@example.com', 'password16'),
+       ('Client17', 'client17@example.com', 'password17'),
+       ('Client18', 'client18@example.com', 'password18'),
+       ('Client19', 'client19@example.com', 'password19'),
+       ('Client20', 'client20@example.com', 'password20'),
+       ('Client21', 'client21@example.com', 'password21'),
+       ('Client22', 'client22@example.com', 'password22'),
+       ('Client23', 'client23@example.com', 'password23'),
+       ('Client24', 'client24@example.com', 'password24'),
+       ('Client25', 'client25@example.com', 'password25'),
+       ('Client26', 'client26@example.com', 'password26'),
+       ('Client27', 'client27@example.com', 'password27'),
+       ('Client28', 'client28@example.com', 'password28'),
+       ('Client29', 'client29@example.com', 'password29'),
+       ('Client30', 'client30@example.com', 'password30'),
+       ('Client31', 'client31@example.com', 'password31'),
+       ('Client32', 'client32@example.com', 'password32'),
+       ('Client33', 'client33@example.com', 'password33'),
+       ('Client34', 'client34@example.com', 'password34'),
+       ('Client35', 'client35@example.com', 'password35'),
+       ('Client36', 'client36@example.com', 'password36'),
+       ('Client37', 'client37@example.com', 'password37'),
+       ('Client38', 'client38@example.com', 'password38'),
+       ('Client39', 'client39@example.com', 'password39'),
+       ('Client40', 'client40@example.com', 'password40'),
+       ('Client41', 'client41@example.com', 'password41'),
+       ('Client42', 'client42@example.com', 'password42'),
+       ('Client43', 'client43@example.com', 'password43'),
+       ('Client44', 'client44@example.com', 'password44'),
+       ('Client45', 'client45@example.com', 'password45'),
+       ('Client46', 'client46@example.com', 'password46'),
+       ('Client47', 'client47@example.com', 'password47'),
+       ('Client48', 'client48@example.com', 'password48'),
+       ('Client49', 'client49@example.com', 'password49'),
+       ('Client50', 'client50@example.com', 'password50');
+--rollback delete from "user" where username in ('Client1', 'Client2', 'Client3', 'Client4', 'Client5', 'Client6', 'Client7', 'Client8', 'Client9',
+-- 'Client10', 'Client11', 'Client12', 'Client13', 'Client14', 'Client15', 'Client16', 'Client17', 'Client18', 'Client19', 'Client20', 'Client21',
+-- 'Client22', 'Client23', 'Client24', 'Client25', 'Client26', 'Client27', 'Client28', 'Client29', 'Client30', 'Client31', 'Client32', 'Client33',
+-- 'Client34', 'Client35', 'Client36', 'Client37', 'Client38', 'Client39', 'Client40', 'Client41', 'Client42', 'Client43', 'Client44', 'Client45',
+-- 'Client46', 'Client47', 'Client48', 'Client49', 'Client50');

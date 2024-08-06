@@ -1,0 +1,68 @@
+--liquibase formatted sql
+--changeset Grigorev Alexei:create_movie_actor_table
+CREATE TABLE movie_actor
+(
+    movie_id       bigint      NOT NULL,
+    actor_id       bigint      NOT NULL,
+    character_name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (movie_id, actor_id),
+    FOREIGN KEY (movie_id) REFERENCES movie (id),
+    FOREIGN KEY (actor_id) REFERENCES actor (id)
+);
+--rollback drop table movie_actor
+
+--changeset Grigorev Alexei:insert_movie_actor_table
+INSERT INTO movie_actor (movie_id, actor_id, character_name)
+VALUES (1, 1, 'Character1'),
+       (2, 2, 'Character2'),
+       (3, 3, 'Character3'),
+       (4, 4, 'Character4'),
+       (5, 5, 'Character5'),
+       (6, 6, 'Character6'),
+       (7, 7, 'Character7'),
+       (8, 8, 'Character8'),
+       (9, 9, 'Character9'),
+       (10, 10, 'Character10'),
+       (11, 11, 'Character11'),
+       (12, 12, 'Character12'),
+       (13, 13, 'Character13'),
+       (14, 14, 'Character14'),
+       (15, 15, 'Character15'),
+       (16, 16, 'Character16'),
+       (17, 17, 'Character17'),
+       (18, 18, 'Character18'),
+       (19, 19, 'Character19'),
+       (20, 20, 'Character20'),
+       (21, 21, 'Character21'),
+       (22, 22, 'Character22'),
+       (23, 23, 'Character23'),
+       (24, 24, 'Character24'),
+       (25, 25, 'Character25'),
+       (26, 26, 'Character26'),
+       (27, 27, 'Character27'),
+       (28, 28, 'Character28'),
+       (29, 29, 'Character29'),
+       (30, 30, 'Character30'),
+       (31, 31, 'Character31'),
+       (32, 32, 'Character32'),
+       (33, 33, 'Character33'),
+       (34, 34, 'Character34'),
+       (35, 35, 'Character35'),
+       (36, 36, 'Character36'),
+       (37, 37, 'Character37'),
+       (38, 38, 'Character38'),
+       (39, 39, 'Character39'),
+       (40, 40, 'Character40'),
+       (41, 41, 'Character41'),
+       (42, 42, 'Character42'),
+       (43, 43, 'Character43'),
+       (44, 44, 'Character44'),
+       (45, 45, 'Character45'),
+       (46, 46, 'Character46'),
+       (47, 47, 'Character47'),
+       (48, 48, 'Character48'),
+       (49, 49, 'Character49'),
+       (50, 50, 'Character50');
+--rollback delete from movie_actor where movie_id IN ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+-- '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41',
+-- '42', '43', '44', '45', '46', '47', '48', '49', '50');
