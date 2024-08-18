@@ -5,19 +5,20 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ParametersHolder {
+	private static ParametersHolder INSTANCE;
+	private static final String FILE_PATH = "./di/src/main/resources/application.properties";
 	private final Properties properties = new Properties();
-	private static ParametersHolder instance;
 
 	private ParametersHolder() {
 		readProperties();
 	}
 
 	public static ParametersHolder getInstance() {
-		if (instance == null) {
-			instance = new ParametersHolder();
+		if (INSTANCE == null) {
+			INSTANCE = new ParametersHolder();
 		}
 
-		return instance;
+		return INSTANCE;
 	}
 
 	public String getProperty(String propertyName) {
@@ -25,10 +26,10 @@ public class ParametersHolder {
 	}
 
 	private void readProperties() {
-		try (FileInputStream fileInputStream = new FileInputStream("./di/src/main/resources/application.properties")) {
+		try (FileInputStream fileInputStream = new FileInputStream(FILE_PATH)) {
 			properties.load(fileInputStream);
 		} catch (IOException e) {
-			throw new RuntimeException();
+			throw new RuntimeException("Ошибка при чтении файла: " + FILE_PATH, e);
 		}
 	}
 }

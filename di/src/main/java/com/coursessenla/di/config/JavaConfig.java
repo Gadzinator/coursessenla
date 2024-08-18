@@ -13,11 +13,8 @@ public class JavaConfig implements Config {
 	}
 
 	public <T> Class<T> resolveImpl(Class<T> type) {
-		if (type.isInterface()) {
-			type = (Class<T>) getImplClass(type);
-		}
+		return type.isInterface() ? (Class<T>) getImplClass(type) : type;
 
-		return type;
 	}
 
 	private <T> Class<? extends T> getImplClass(Class<T> type) {
