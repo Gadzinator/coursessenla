@@ -6,7 +6,6 @@ import com.coursessenla.main.service.Service;
 
 @Component
 public class ControllerImpl implements Controller {
-
 	private final Service service;
 
 	@Autowire
