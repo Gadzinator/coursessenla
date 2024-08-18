@@ -43,15 +43,15 @@ public class BeanInjector {
 					addToContext(aClass, instance);
 				}
 
-				for (Field declaredField : aClass.getDeclaredFields()) {
-					if (declaredField.isAnnotationPresent(Autowire.class)) {
-						injectByField(aClass, declaredField);
-					}
-				}
-
 				for (Constructor<?> declaredConstructor : aClass.getDeclaredConstructors()) {
 					if (declaredConstructor.isAnnotationPresent(Autowire.class)) {
 						injectByConstructor(aClass, declaredConstructor);
+					}
+				}
+
+				for (Field declaredField : aClass.getDeclaredFields()) {
+					if (declaredField.isAnnotationPresent(Autowire.class)) {
+						injectByField(aClass, declaredField);
 					}
 				}
 
