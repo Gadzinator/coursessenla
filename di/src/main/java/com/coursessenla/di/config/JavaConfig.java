@@ -5,7 +5,6 @@ import org.reflections.Reflections;
 import java.util.Set;
 
 public class JavaConfig implements Config {
-
 	private final Reflections scanner;
 
 	public JavaConfig(Reflections scanner) {

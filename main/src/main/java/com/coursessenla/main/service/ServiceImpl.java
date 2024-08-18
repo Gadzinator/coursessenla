@@ -6,7 +6,6 @@ import com.coursessenla.main.repository.Repository;
 
 @Component
 public class ServiceImpl implements Service {
-
 	private Repository repository;
 
 	@Autowire

@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class BeanInjector {
-
 	private final ParametersHolder parametersHolder = ParametersHolder.getInstance();
 	private final Reflections scanner;
 	private final JavaConfig config;
