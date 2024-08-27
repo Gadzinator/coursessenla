@@ -4,8 +4,7 @@ import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.domain.dto.MovieDto;
 import com.coursessenla.main.domain.entity.Genre;
 import com.coursessenla.main.domain.entity.Movie;
-import com.coursessenla.main.mapper.GenreMapper;
-import com.coursessenla.main.mapper.MovieMapper;
+import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.MovieRepository;
 import com.coursessenla.main.service.GenreService;
 import lombok.AllArgsConstructor;
@@ -22,8 +21,8 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 
 	private final MovieRepository movieRepository;
 	private final GenreService genreService;
-	private final MovieMapper mapper;
-	private final GenreMapper genreMapper;
+	private final GenericMapperImpl<Movie, MovieDto> movieMapper;
+	private final GenericMapperImpl<Genre, GenreDto> genreMapper;
 
 	@Override
 	public void save(MovieDto movieDto) {
@@ -36,7 +35,7 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 				.map(genreMapper::toEntity)
 				.toList();
 
-		final Movie movie = mapper.toEntity(movieDto);
+		final Movie movie = movieMapper.toEntity(movieDto);
 		movie.setGenres(genreList);
 
 		movieRepository.save(movie);
@@ -45,7 +44,7 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 	@Override
 	public MovieDto findById(long id) {
 		return movieRepository.findById(id)
-				.map(mapper::toDto)
+				.map(movieMapper::toDto)
 				.orElseThrow(() -> new NoSuchElementException(String.format("Movie with id %d was not found", id)));
 	}
 
@@ -57,14 +56,14 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 		}
 
 		return movies.stream()
-				.map(mapper::toDto)
+				.map(movieMapper::toDto)
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public void updateById(long id, MovieDto movieDtoUpdate) {
 		findById(id);
-		movieRepository.updateById(id, mapper.toEntity(movieDtoUpdate));
+		movieRepository.updateById(id, movieMapper.toEntity(movieDtoUpdate));
 	}
 
 	@Override

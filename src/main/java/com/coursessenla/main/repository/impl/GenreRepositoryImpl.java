@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 @Repository
 public class GenreRepositoryImpl implements GenreRepository {
@@ -39,12 +41,11 @@ public class GenreRepositoryImpl implements GenreRepository {
 
 	@Override
 	public void updateById(long id, Genre genreUpdate) {
-		for (int i = 0; i < genres.size(); i++) {
-			final Genre genre = genres.get(i);
-			if (genre.getId() == id) {
-				genres.set(i, genreUpdate);
-			}
-		}
+		final OptionalInt indexOptional = IntStream.range(0, genres.size())
+				.filter(i -> genres.get(i).getId() == id)
+				.findFirst();
+
+		indexOptional.ifPresent(index -> genres.set(index, genreUpdate));
 	}
 
 	@Override

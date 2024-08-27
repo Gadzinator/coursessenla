@@ -1,8 +1,10 @@
 package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.DirectorDto;
-import com.coursessenla.main.mapper.DirectorMapper;
+import com.coursessenla.main.domain.entity.Director;
+import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.DirectorRepository;
+import com.coursessenla.main.service.DirectorService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +12,10 @@ import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 @Service
-public class DirectorServiceImpl implements com.coursessenla.main.service.DirectorService {
+public class DirectorServiceImpl implements DirectorService {
 
 	private DirectorRepository directorRepository;
-	private DirectorMapper mapper;
+	private final GenericMapperImpl<Director, DirectorDto> mapper;
 
 	@Override
 	public void save(DirectorDto directorDto) {

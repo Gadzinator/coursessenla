@@ -4,11 +4,13 @@ import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.ActorDto;
 import com.coursessenla.main.service.ActorService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @AllArgsConstructor
 @Controller
 public class ActorController {
@@ -20,14 +22,14 @@ public class ActorController {
 		actorService.save(actorDto);
 
 		final String json = jsonUtils.getJson(actorDto);
-		System.out.println("Method to save to ActorController - " + json);
+		log.info("Method to save to ActorController - {}", json);
 	}
 
 	public ActorDto findById(long id) {
 		final ActorDto actorDto = actorService.findById(id);
 
 		final String json = jsonUtils.getJson(actorDto);
-		System.out.println("Method to findById to ActorController - " + json);
+		log.info("Method to findById to ActorController - " + json);
 
 		return actorDto;
 	}
@@ -36,7 +38,7 @@ public class ActorController {
 		final ActorDto actorDto = actorService.findByName(name);
 
 		final String json = jsonUtils.getJson(actorDto);
-		System.out.println("Method to findByName to ActorController - " + json);
+		log.info("Method to findByName to ActorController - " + json);
 
 		return actorDto;
 	}
@@ -45,7 +47,7 @@ public class ActorController {
 		actorService.update(id, actorDtoUpdate);
 
 		final String json = jsonUtils.getJson(actorDtoUpdate);
-		System.out.println("Method to updateById to ActorController - " + json);
+		log.info("Method to updateById to ActorController - " + json);
 	}
 
 	public void delete(long id) {
@@ -54,6 +56,6 @@ public class ActorController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("Message", "Actor with Id " + id + " has been successfully deleted");
 		String json = jsonUtils.getJson(response);
-		System.out.println(json);
+		log.info(json);
 	}
 }

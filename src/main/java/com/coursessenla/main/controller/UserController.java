@@ -5,11 +5,13 @@ import com.coursessenla.main.domain.dto.RegistrationUserDto;
 import com.coursessenla.main.domain.dto.UserDto;
 import com.coursessenla.main.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @AllArgsConstructor
 @Controller
 public class UserController {
@@ -21,7 +23,7 @@ public class UserController {
 		UserDto newUser = userService.createNewUser(registrationUserDto);
 
 		String json = jsonUtils.getJson(newUser);
-		System.out.println("Method to createNewUser to UserController - " + json);
+		log.info("Method to createNewUser to UserController - " + json);
 
 		return newUser;
 	}
@@ -30,7 +32,7 @@ public class UserController {
 		UserDto userDto = userService.findById(id);
 
 		String json = jsonUtils.getJson(userDto);
-		System.out.println("Method to findById to UserController - " + json);
+		log.info("Method to findById to UserController - " + json);
 
 		return userDto;
 	}
@@ -41,6 +43,6 @@ public class UserController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("Message", "User with Id " + id + " has been successfully deleted");
 		String json = jsonUtils.getJson(response);
-		System.out.println(json);
+		log.info(json);
 	}
 }

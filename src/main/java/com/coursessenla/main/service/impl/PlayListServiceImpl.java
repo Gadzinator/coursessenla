@@ -1,8 +1,10 @@
 package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.PlayListDto;
-import com.coursessenla.main.mapper.PlayListMapper;
+import com.coursessenla.main.domain.entity.Playlist;
+import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.PlayListRepository;
+import com.coursessenla.main.service.PlayListService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +12,10 @@ import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 @Service
-public class PlayListServiceImpl implements com.coursessenla.main.service.PlayListService {
+public class PlayListServiceImpl implements PlayListService {
 
 	private final PlayListRepository playListRepository;
-	private final PlayListMapper mapper;
+	private final GenericMapperImpl<Playlist, PlayListDto> mapper;
 
 	@Override
 	public void save(PlayListDto playListDto) {

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 @Repository
 public class PlayListRepositoryImpl implements PlayListRepository {
@@ -27,12 +29,11 @@ public class PlayListRepositoryImpl implements PlayListRepository {
 
 	@Override
 	public void updateById(long id, Playlist playListUpdate) {
-		for (int i = 0; i < playlists.size(); i++) {
-			final Playlist playlist = playlists.get(i);
-			if (playlist.getId() == id) {
-				playlists.set(i, playListUpdate);
-			}
-		}
+		final OptionalInt indexOptional = IntStream.range(0, playlists.size())
+				.filter(i -> playlists.get(i).getId() == id)
+				.findFirst();
+
+		indexOptional.ifPresent(index -> playlists.set(index, playListUpdate));
 	}
 
 	@Override

@@ -4,12 +4,14 @@ import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.MovieDto;
 import com.coursessenla.main.service.MovieService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @AllArgsConstructor
 @Controller
 public class MovieController {
@@ -21,14 +23,14 @@ public class MovieController {
 		movieService.save(movieDto);
 
 		final String json = jsonUtils.getJson(movieDto);
-		System.out.println("Method to save to MovieController - " + json);
+		log.info("Method to save to MovieController - " + json);
 	}
 
 	public MovieDto findById(long id) {
 		final MovieDto movieDto = movieService.findById(id);
 
 		final String json = jsonUtils.getJson(movieDto);
-		System.out.println("Method to findById to MovieController - " + json);
+		log.info("Method to findById to MovieController - " + json);
 
 		return movieDto;
 	}
@@ -37,7 +39,7 @@ public class MovieController {
 		final List<MovieDto> movieDtoList = movieService.findByGenre(genreName);
 
 		final String json = jsonUtils.getJson(movieDtoList);
-		System.out.println("Method to findByName to MovieController - " + json);
+		log.info("Method to findByName to MovieController - " + json);
 
 		return movieDtoList;
 	}
@@ -46,7 +48,7 @@ public class MovieController {
 		movieService.updateById(id, movieDtoUpdate);
 
 		final String json = jsonUtils.getJson(movieDtoUpdate);
-		System.out.println("Method to updateById to MovieController - " + json);
+		log.info("Method to updateById to MovieController - " + json);
 	}
 
 	public void deleteById(long id) {
@@ -55,6 +57,6 @@ public class MovieController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("Message", "Movie with Id " + id + " has been successfully deleted");
 		String json = jsonUtils.getJson(response);
-		System.out.println(json);
+		log.info(json);
 	}
 }

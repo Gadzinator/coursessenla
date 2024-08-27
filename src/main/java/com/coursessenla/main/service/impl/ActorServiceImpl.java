@@ -1,8 +1,10 @@
 package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.ActorDto;
-import com.coursessenla.main.mapper.ActorMapper;
+import com.coursessenla.main.domain.entity.Actor;
+import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.ActorRepository;
+import com.coursessenla.main.service.ActorService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +12,10 @@ import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 @Service
-public class ActorServiceImpl implements com.coursessenla.main.service.ActorService {
+public class ActorServiceImpl implements ActorService {
 
 	private final ActorRepository actorRepository;
-	private final ActorMapper mapper;
+	private final GenericMapperImpl<Actor, ActorDto> mapper;
 
 	@Override
 	public void save(ActorDto actorDto) {

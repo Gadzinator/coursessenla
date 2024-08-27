@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Repository
 public class MovieRepositoryImpl implements MovieRepository {
@@ -34,12 +36,11 @@ public class MovieRepositoryImpl implements MovieRepository {
 
 	@Override
 	public void updateById(long id, Movie movieUpdate) {
-		for (int i = 0; i < movies.size(); i++) {
-			final Movie movie = movies.get(i);
-			if (movie.getId() == id) {
-				movies.set(i, movieUpdate);
-			}
-		}
+		final OptionalInt indexOptional = IntStream.range(0, movies.size())
+				.filter(i -> movies.get(i).getId() == id)
+				.findFirst();
+
+		indexOptional.ifPresent(index -> movies.set(index, movieUpdate));
 	}
 
 	@Override

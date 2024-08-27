@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 @Repository
 public class ReviewRepositoryImpl implements ReviewRepository {
@@ -27,12 +29,11 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
 	@Override
 	public void updateById(long id, Review reviewUpdate) {
-		for (int i = 0; i < reviews.size(); i++) {
-			Review review = reviews.get(i);
-			if (review.getId() == id) {
-				reviews.set(i, reviewUpdate);
-			}
-		}
+		final OptionalInt indexOptional = IntStream.range(0, reviews.size())
+				.filter(i -> reviews.get(i).getId() == id)
+				.findFirst();
+
+		indexOptional.ifPresent(index -> reviews.set(index, reviewUpdate));
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.ReviewDto;
-import com.coursessenla.main.mapper.ReviewMapper;
+import com.coursessenla.main.domain.entity.Review;
+import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.ReviewRepository;
+import com.coursessenla.main.service.ReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +12,10 @@ import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 @Service
-public class ReviewServiceImpl implements com.coursessenla.main.service.ReviewService {
+public class ReviewServiceImpl implements ReviewService {
 
 	private final ReviewRepository reviewRepository;
-	private final ReviewMapper mapper;
+	private final GenericMapperImpl<Review, ReviewDto> mapper;
 
 	@Override
 	public void save(ReviewDto reviewDto) {

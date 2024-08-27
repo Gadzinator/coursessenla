@@ -16,7 +16,9 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Override
 	public void save(User user) {
-		user.setRole(Role.ROLE_USER);
+		Role role = new Role();
+		role.setName("ROLE_USER");
+		user.setRole(role);
 		users.add(user);
 	}
 

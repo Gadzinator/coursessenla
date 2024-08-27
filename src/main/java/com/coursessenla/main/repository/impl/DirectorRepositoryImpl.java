@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 @Repository
 public class DirectorRepositoryImpl implements DirectorRepository {
@@ -34,12 +36,11 @@ public class DirectorRepositoryImpl implements DirectorRepository {
 
 	@Override
 	public void updateById(long id, Director directorUpdate) {
-		for (int i = 0; i < directors.size(); i++) {
-			Director director = directors.get(i);
-			if (director.getId() == id) {
-				directors.set(i, directorUpdate);
-			}
-		}
+		final OptionalInt indexOptional = IntStream.range(0, directors.size())
+				.filter(i -> directors.get(i).getId() == id)
+				.findFirst();
+
+		indexOptional.ifPresent(index -> directors.set(index, directorUpdate));
 	}
 
 	@Override

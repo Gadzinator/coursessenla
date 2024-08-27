@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 @Repository
 public class ProfileRepositoryImpl implements ProfileRepository {
@@ -27,12 +29,11 @@ public class ProfileRepositoryImpl implements ProfileRepository {
 
 	@Override
 	public void update(long id, Profile profileUpdate) {
-		for (int i = 0; i < profiles.size(); i++) {
-			final Profile profile = profiles.get(i);
-			if (profile.getId() == id) {
-				profiles.set(i, profileUpdate);
-			}
-		}
+		final OptionalInt indexOptional = IntStream.range(0, profiles.size())
+				.filter(i -> profiles.get(i).getId() == id)
+				.findFirst();
+
+		indexOptional.ifPresent(index -> profiles.set(index, profileUpdate));
 	}
 
 	@Override

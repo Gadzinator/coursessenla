@@ -2,8 +2,9 @@ package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.domain.entity.Genre;
-import com.coursessenla.main.mapper.GenreMapper;
+import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.GenreRepository;
+import com.coursessenla.main.service.GenreService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,10 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class GenreServiceImpl implements com.coursessenla.main.service.GenreService {
+public class GenreServiceImpl implements GenreService {
 
 	private final GenreRepository genreRepository;
-	private final GenreMapper mapper;
+	private final GenericMapperImpl<Genre, GenreDto> mapper;
 
 	@Override
 	public void save(GenreDto genreDto) {
