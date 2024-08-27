@@ -1,15 +1,10 @@
 package com.coursessenla.main.domain.entity;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-public enum Role {
+@Data
+public class Role {
 
-	ROLE_USER("ROLE_USER"), ROLE_ADMIN("ROLE_ADMIN");
-
-	private final String value;
-
-	Role(String value) {
-		this.value = value;
-	}
+	private long id;
+	private String name;
 }

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 @Data
-@Component
 public class Actor {
 
 	private long id;

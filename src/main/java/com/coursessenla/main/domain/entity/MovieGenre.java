@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Data
-@Component
 public class MovieGenre {
 
 	private List<Long> movieId;
