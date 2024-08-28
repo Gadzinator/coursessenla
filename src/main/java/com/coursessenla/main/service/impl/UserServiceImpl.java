@@ -4,29 +4,26 @@ import com.coursessenla.main.domain.dto.RegistrationUserDto;
 import com.coursessenla.main.domain.dto.UserDto;
 import com.coursessenla.main.domain.entity.Profile;
 import com.coursessenla.main.domain.entity.User;
-import com.coursessenla.main.mapper.GenericMapperImpl;
+import com.coursessenla.main.mapper.GenericMapper;
 import com.coursessenla.main.repository.ProfileRepository;
 import com.coursessenla.main.repository.UserRepository;
 import com.coursessenla.main.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final ProfileRepository profileRepository;
-//	private final UserMapper userMapper;
-	private final GenericMapperImpl<User, UserDto> userMapper;
-	private final GenericMapperImpl<User, RegistrationUserDto> registrationUserDtoMapper;
+	private final GenericMapper mapper;
 
 	@Override
 	public UserDto createNewUser(RegistrationUserDto registrationUserDto) {
-//		final User user = userMapper.registrationUserDtoToEntity(registrationUserDto);
-		final User user = registrationUserDtoMapper.toEntity(registrationUserDto);
+		final User user = mapper.mapToEntity(registrationUserDto, User.class);
 		user.setPassword(registrationUserDto.getPassword());
 
 		final Profile profile = createProfile(registrationUserDto);
@@ -34,13 +31,14 @@ public class UserServiceImpl implements UserService {
 
 		profileRepository.save(profile);
 		userRepository.save(user);
-		return userMapper.toDto(user);
+
+		return mapper.mapToDto(user, UserDto.class);
 	}
 
 	@Override
 	public UserDto findById(long id) {
 		return userRepository.findById(id)
-				.map(userMapper::toDto)
+				.map(user -> mapper.mapToEntity(user, UserDto.class))
 				.orElseThrow(() -> new NoSuchElementException(String.format("User with id %d was not found", id)));
 	}
 

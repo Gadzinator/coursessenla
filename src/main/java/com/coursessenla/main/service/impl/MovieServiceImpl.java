@@ -4,10 +4,10 @@ import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.domain.dto.MovieDto;
 import com.coursessenla.main.domain.entity.Genre;
 import com.coursessenla.main.domain.entity.Movie;
-import com.coursessenla.main.mapper.GenericMapperImpl;
+import com.coursessenla.main.mapper.GenericMapper;
 import com.coursessenla.main.repository.MovieRepository;
 import com.coursessenla.main.service.GenreService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -15,14 +15,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class MovieServiceImpl implements com.coursessenla.main.service.MovieService {
 
 	private final MovieRepository movieRepository;
 	private final GenreService genreService;
-	private final GenericMapperImpl<Movie, MovieDto> movieMapper;
-	private final GenericMapperImpl<Genre, GenreDto> genreMapper;
+	private final GenericMapper mapper;
 
 	@Override
 	public void save(MovieDto movieDto) {
@@ -32,10 +31,10 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 
 		final List<Genre> genreList = genreService.findAllByNames(genreNames)
 				.stream()
-				.map(genreMapper::toEntity)
+				.map(genreDto -> mapper.mapToDto(genreDto, Genre.class))
 				.toList();
 
-		final Movie movie = movieMapper.toEntity(movieDto);
+		final Movie movie = mapper.mapToDto(movieDto, Movie.class);
 		movie.setGenres(genreList);
 
 		movieRepository.save(movie);
@@ -44,7 +43,7 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 	@Override
 	public MovieDto findById(long id) {
 		return movieRepository.findById(id)
-				.map(movieMapper::toDto)
+				.map(movie -> mapper.mapToEntity(movie, MovieDto.class))
 				.orElseThrow(() -> new NoSuchElementException(String.format("Movie with id %d was not found", id)));
 	}
 
@@ -56,14 +55,14 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 		}
 
 		return movies.stream()
-				.map(movieMapper::toDto)
+				.map(movie -> mapper.mapToDto(movie, MovieDto.class))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public void updateById(long id, MovieDto movieDtoUpdate) {
 		findById(id);
-		movieRepository.updateById(id, movieMapper.toEntity(movieDtoUpdate));
+		movieRepository.updateById(id, mapper.mapToDto(movieDtoUpdate, Movie.class));
 	}
 
 	@Override

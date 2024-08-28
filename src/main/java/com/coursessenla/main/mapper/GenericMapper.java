@@ -1,7 +1,8 @@
 package com.coursessenla.main.mapper;
 
-public interface GenericMapper<E, D> {
-	D toDto(Object entity);
+public interface GenericMapper {
 
-	E toEntity(Object dto);
+	<T> T mapToDto(Object entity, Class<T> dtoClass);
+
+	<T> T mapToEntity(Object dto, Class<T> entityClass);
 }
