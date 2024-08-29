@@ -3,7 +3,7 @@ package com.coursessenla.main.controller;
 import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.PlayListDto;
 import com.coursessenla.main.service.PlayListService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class PlayListController {
 
-	private PlayListService playListService;
-	private JsonUtils jsonUtils;
+	private final PlayListService playListService;
+	private final JsonUtils jsonUtils;
 
 	public void save(PlayListDto playListDto) {
 		playListService.save(playListDto);

@@ -2,10 +2,10 @@ package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.domain.entity.Genre;
-import com.coursessenla.main.mapper.GenericMapperImpl;
+import com.coursessenla.main.mapper.GenericMapper;
 import com.coursessenla.main.repository.GenreRepository;
 import com.coursessenla.main.service.GenreService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,36 +15,36 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class GenreServiceImpl implements GenreService {
 
 	private final GenreRepository genreRepository;
-	private final GenericMapperImpl<Genre, GenreDto> mapper;
+	private final GenericMapper mapper;
 
 	@Override
 	public void save(GenreDto genreDto) {
-		genreRepository.save(mapper.toEntity(genreDto));
+		genreRepository.save(mapper.mapToDto(genreDto, Genre.class));
 	}
 
 	@Override
 	public GenreDto findById(long id) {
 		return genreRepository.findById(id)
-				.map(mapper::toDto)
+				.map(genre -> mapper.mapToEntity(genre, GenreDto.class))
 				.orElseThrow(() -> new NoSuchElementException(String.format("Genre with id %d was not found", id)));
 	}
 
 	@Override
 	public GenreDto findByName(String name) {
 		return genreRepository.findByName(name)
-				.map(mapper::toDto)
+				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
 				.orElseThrow(() -> new NoSuchElementException(String.format("Genre with name %s was not found", name)));
 	}
 
 	@Override
 	public void updateById(long id, GenreDto genreDtoUpdate) {
 		findById(id);
-		genreRepository.updateById(id, mapper.toEntity(genreDtoUpdate));
+		genreRepository.updateById(id, mapper.mapToDto(genreDtoUpdate, Genre.class));
 	}
 
 	@Override
@@ -56,13 +56,13 @@ public class GenreServiceImpl implements GenreService {
 
 		for (String genreName : genreNames) {
 			if (existingGenres.containsKey(genreName)) {
-				genreDtoList.add(mapper.toDto(existingGenres.get(genreName)));
+				genreDtoList.add(mapper.mapToDto(existingGenres.get(genreName), GenreDto.class));
 			} else {
 				Genre newGenre = new Genre();
 				newGenre.setName(genreName);
 				newGenre.setId(findLastId() + 1);
 				genreRepository.save(newGenre);
-				genreDtoList.add(mapper.toDto(newGenre));
+				genreDtoList.add(mapper.mapToDto(newGenre, GenreDto.class));
 			}
 		}
 

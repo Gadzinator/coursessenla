@@ -3,7 +3,7 @@ package com.coursessenla.main.controller;
 import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.DirectorDto;
 import com.coursessenla.main.service.DirectorService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class DirectorController {
 

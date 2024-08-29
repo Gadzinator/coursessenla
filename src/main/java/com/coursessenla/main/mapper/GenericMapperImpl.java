@@ -2,25 +2,21 @@ package com.coursessenla.main.mapper;
 
 import org.modelmapper.ModelMapper;
 
-public class GenericMapperImpl<E, D> implements GenericMapper<E, D> {
+public class GenericMapperImpl implements GenericMapper {
 
 	private final ModelMapper mapper;
-	private final Class<E> entityClass;
-	private final Class<D> dtoClass;
 
-	public GenericMapperImpl(ModelMapper mapper, Class<E> entityClass, Class<D> dtoClass) {
+	public GenericMapperImpl(ModelMapper mapper) {
 		this.mapper = mapper;
-		this.entityClass = entityClass;
-		this.dtoClass = dtoClass;
 	}
 
 	@Override
-	public D toDto(Object entity) {
+	public <T> T mapToDto(Object entity, Class<T> dtoClass) {
 		return mapper.map(entity, dtoClass);
 	}
 
 	@Override
-	public E toEntity(Object dto) {
+	public <T> T mapToEntity(Object dto, Class<T> entityClass) {
 		return mapper.map(dto, entityClass);
 	}
 }

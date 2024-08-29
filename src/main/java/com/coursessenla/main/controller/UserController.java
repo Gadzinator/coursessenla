@@ -4,7 +4,7 @@ import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.RegistrationUserDto;
 import com.coursessenla.main.domain.dto.UserDto;
 import com.coursessenla.main.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class UserController {
 

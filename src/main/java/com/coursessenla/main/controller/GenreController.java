@@ -3,7 +3,7 @@ package com.coursessenla.main.controller;
 import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.service.GenreService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Controller
 public class GenreController {
 
