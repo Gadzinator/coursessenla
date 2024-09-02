@@ -1,6 +1,5 @@
 package com.coursessenla.main.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
