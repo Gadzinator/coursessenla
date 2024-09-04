@@ -5,13 +5,15 @@ import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.domain.dto.MovieDto;
 import com.coursessenla.main.domain.dto.ReviewDto;
 import com.coursessenla.main.domain.dto.UserDto;
-import com.coursessenla.main.execute.MyRunnable;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @ComponentScan
 public class Application {
@@ -21,12 +23,23 @@ public class Application {
 		final ReviewController reviewController = context.getBean(ReviewController.class);
 		final MovieDto movieDtoFirst = createMovieDtoFirst();
 		final MovieDto movieDtoSecond = createMovieDtoSecond();
-		Thread myThread = new Thread(new MyRunnable(), "MyThread");
-		myThread.start();
-		Thread myThread1 = new Thread(new MyRunnable(), "MyThread1");
-		myThread1.start();
-		reviewController.save(createReviewDtoFirst(createUserDtoFirst(), movieDtoFirst));
-		reviewController.save(createReviewDtoSecond(createUserDtoSecond(), movieDtoSecond));
+
+		ExecutorService executorService = Executors.newFixedThreadPool(2);
+		try {
+			executorService.submit(() -> reviewController.save(createReviewDtoFirst(createUserDtoFirst(), movieDtoFirst)));
+			executorService.submit(() -> reviewController.save(createReviewDtoSecond(createUserDtoSecond(), movieDtoSecond)));
+		} finally {
+			executorService.shutdown();
+
+			try {
+				if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+					executorService.shutdownNow();
+				}
+			} catch (InterruptedException e) {
+				executorService.shutdownNow();
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 
 	private static ReviewDto createReviewDtoFirst(UserDto userDto, MovieDto movieDto) {
