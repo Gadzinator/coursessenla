@@ -1,5 +1,6 @@
 package com.coursessenla.main.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -8,15 +9,12 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @Component
 public class ConnectionHolder {
 
 	private final DataSource dataSource;
 	private final Map<String, Connection> connectionMap = new HashMap<>();
-
-	public ConnectionHolder(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
 	public Connection getConnection() throws SQLException {
 		String threadName = Thread.currentThread().getName();

@@ -1,6 +1,7 @@
 package com.coursessenla.main.config;
 
 import liquibase.integration.spring.SpringLiquibase;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 
+@RequiredArgsConstructor
 @Configuration
 @PropertySource("classpath:/application.properties")
 public class LiquibaseConfig {
@@ -16,10 +18,6 @@ public class LiquibaseConfig {
 
 	@Value("${changeLogFile}")
 	private String changelog;
-
-	public LiquibaseConfig(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
 	@Bean
 	public SpringLiquibase liquibase() {

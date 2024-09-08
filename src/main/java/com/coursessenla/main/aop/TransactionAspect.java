@@ -2,6 +2,7 @@ package com.coursessenla.main.aop;
 
 import com.coursessenla.main.config.ConnectionHolder;
 import com.coursessenla.main.exception.FailedTransaction;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,15 +10,12 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 
+@RequiredArgsConstructor
 @Aspect
 @Component
 public class TransactionAspect {
 
 	private final ConnectionHolder connectionHolder;
-
-	public TransactionAspect(ConnectionHolder connectionHolder) {
-		this.connectionHolder = connectionHolder;
-	}
 
 	@Around(value = "@annotation(com.coursessenla.main.annotation.Transaction)")
 	public Object manageTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
