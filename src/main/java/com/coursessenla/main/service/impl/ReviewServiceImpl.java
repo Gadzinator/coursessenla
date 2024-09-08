@@ -1,5 +1,6 @@
 package com.coursessenla.main.service.impl;
 
+import com.coursessenla.main.annotation.Transaction;
 import com.coursessenla.main.domain.dto.ReviewDto;
 import com.coursessenla.main.domain.entity.Review;
 import com.coursessenla.main.mapper.GenericMapper;
@@ -17,6 +18,7 @@ public class ReviewServiceImpl implements ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final GenericMapper mapper;
 
+	@Transaction
 	@Override
 	public void save(ReviewDto reviewDto) {
 		reviewRepository.save(mapper.mapToDto(reviewDto, Review.class));
@@ -29,12 +31,14 @@ public class ReviewServiceImpl implements ReviewService {
 				.orElseThrow(() -> new NoSuchElementException(String.format("Review with id %d was not found", id)));
 	}
 
+	@Transaction
 	@Override
 	public void updateById(long id, ReviewDto reviewDtoUpdate) {
 		findById(id);
 		reviewRepository.updateById(id, mapper.mapToDto(reviewDtoUpdate, Review.class));
 	}
 
+	@Transaction
 	@Override
 	public void deleteById(long id) {
 		findById(id);
