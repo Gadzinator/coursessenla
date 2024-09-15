@@ -11,7 +11,9 @@ public interface MovieService {
 
 	List<MovieDto> findByGenre(String genreName);
 
-	void updateById(long id, MovieDto movieDtoUpdate);
+	List<MovieDto> findAll();
+
+	void update(MovieDto movieDtoUpdate);
 
 	void deleteById(long id);
 }

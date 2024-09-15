@@ -2,6 +2,8 @@ package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.DirectorDto;
 
+import java.util.List;
+
 public interface DirectorService {
 	void save(DirectorDto directorDto);
 
@@ -9,7 +11,9 @@ public interface DirectorService {
 
 	DirectorDto findByName(String name);
 
-	void updateById(long id, DirectorDto directorDtoUpdate);
+	List<DirectorDto> findAll();
+
+	void update(DirectorDto directorDtoUpdate);
 
 	void deleteById(long id);
 }

@@ -1,50 +1,46 @@
 package com.coursessenla.main.repository.impl;
 
 import com.coursessenla.main.domain.entity.Director;
+import com.coursessenla.main.repository.AbstractDao;
 import com.coursessenla.main.repository.DirectorRepository;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
 
 @Repository
-public class DirectorRepositoryImpl implements DirectorRepository {
+public class DirectorRepositoryImpl extends AbstractDao<Director, Long> implements DirectorRepository {
 
-	private final List<Director> directors = new ArrayList<>();
+	@PersistenceContext
+	private EntityManager entityManager;
 
-	@Override
-	public void save(Director director) {
-		directors.add(director);
-	}
-
-	@Override
-	public Optional<Director> findById(long id) {
-		return directors.stream()
-				.filter(director -> director.getId() == id)
-				.findFirst();
+	protected DirectorRepositoryImpl() {
+		super(Director.class);
 	}
 
 	@Override
 	public Optional<Director> findByName(String name) {
-		return directors.stream()
-				.filter(director -> director.getName().equals(name))
-				.findFirst();
-	}
+		final EntityGraph<Director> entityGraph = entityManager.createEntityGraph(Director.class);
+		final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		final CriteriaQuery<Director> criteriaQuery = criteriaBuilder.createQuery(Director.class);
+		final Root<Director> root = criteriaQuery.from(Director.class);
+		criteriaQuery.where(criteriaBuilder.equal(root.get("name"), name));
 
-	@Override
-	public void updateById(long id, Director directorUpdate) {
-		final OptionalInt indexOptional = IntStream.range(0, directors.size())
-				.filter(i -> directors.get(i).getId() == id)
-				.findFirst();
+		final TypedQuery<Director> typedQuery = entityManager.createQuery(criteriaQuery);
+		typedQuery.setHint("jakarta.persistence.fetchgraph", entityGraph);
 
-		indexOptional.ifPresent(index -> directors.set(index, directorUpdate));
-	}
-
-	@Override
-	public void deleteById(long id) {
-		directors.removeIf(director -> director.getId() == id);
+		try {
+			final Director director = typedQuery.getSingleResult();
+			return Optional.ofNullable(director);
+		} catch (NoResultException e) {
+			return Optional.empty();
+		}
 	}
 }

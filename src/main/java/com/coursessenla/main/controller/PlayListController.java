@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -19,34 +20,53 @@ public class PlayListController {
 	private final JsonUtils jsonUtils;
 
 	public void save(PlayListDto playListDto) {
+		log.info("Starting method save with PlayListDto: {}", playListDto);
+
 		playListService.save(playListDto);
 
 		final String json = jsonUtils.getJson(playListDto);
-		log.info("Method to save to PlaylistController - " + json);
+		log.info("Ending method save: {}", json);
 	}
 
 	public PlayListDto findById(long id) {
+		log.info("Starting method findById with id: {}", id);
+
 		final PlayListDto playListDto = playListService.findById(id);
 
 		final String json = jsonUtils.getJson(playListDto);
-		log.info("Method to findById to PlaylistController - " + json);
+		log.info("Ending method findById: {}", json);
 
 		return playListDto;
 	}
 
-	public void updateById(long id, PlayListDto playListDtoUpdate) {
-		playListService.updateById(id, playListDtoUpdate);
+	public List<PlayListDto> findAll() {
+		log.info("Starting method findAll");
+
+		final List<PlayListDto> playListDtoList = playListService.findAll();
+
+		final String json = jsonUtils.getJson(playListDtoList);
+		log.info("Ending method findAll: {}", json);
+
+		return playListDtoList;
+	}
+
+	public void update(PlayListDto playListDtoUpdate) {
+		log.info("Starting method update with PlayListDto: {}", playListDtoUpdate);
+
+		playListService.update(playListDtoUpdate);
 
 		final String json = jsonUtils.getJson(playListDtoUpdate);
-		log.info("Method to updateById to PlaylistController - " + json);
+		log.info("Ending method update: {}", json);
 	}
 
 	public void deleteById(long id) {
+		log.info("Starting method deleteById with id: {}", id);
+
 		playListService.deleteById(id);
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("Message", "Playlist with Id " + id + " has been successfully deleted");
+		response.put("Message", String.format("Playlist with Id %d has been successfully deleted", id));
 		String json = jsonUtils.getJson(response);
-		log.info(json);
+		log.info("Ending method deleteById. Deletion response: {}", json);
 	}
 }

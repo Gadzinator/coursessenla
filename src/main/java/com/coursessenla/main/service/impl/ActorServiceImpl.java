@@ -3,20 +3,24 @@ package com.coursessenla.main.service.impl;
 import com.coursessenla.main.domain.dto.ActorDto;
 import com.coursessenla.main.domain.entity.Actor;
 import com.coursessenla.main.mapper.GenericMapper;
-import com.coursessenla.main.repository.ActorRepository;
+import com.coursessenla.main.repository.impl.ActorRepositoryImpl;
 import com.coursessenla.main.service.ActorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class ActorServiceImpl implements ActorService {
 
-	private final ActorRepository actorRepository;
+	private final ActorRepositoryImpl actorRepository;
 	private final GenericMapper mapper;
 
+	@Transactional
 	@Override
 	public void save(ActorDto actorDto) {
 		actorRepository.save(mapper.mapToEntity(actorDto, Actor.class));
@@ -37,11 +41,20 @@ public class ActorServiceImpl implements ActorService {
 	}
 
 	@Override
-	public void update(long id, ActorDto actorDtoUpdate) {
-		findById(id);
-		actorRepository.updateById(id, mapper.mapToDto(actorDtoUpdate, Actor.class));
+	public List<ActorDto> findAll() {
+		return actorRepository.findAll().stream()
+				.map(actor -> mapper.mapToDto(actor, ActorDto.class))
+				.collect(Collectors.toList());
 	}
 
+	@Transactional
+	@Override
+	public void update(ActorDto actorDtoUpdate) {
+		findById(actorDtoUpdate.getId());
+		actorRepository.update(mapper.mapToDto(actorDtoUpdate, Actor.class));
+	}
+
+	@Transactional
 	@Override
 	public void deleteById(long id) {
 		findById(id);
