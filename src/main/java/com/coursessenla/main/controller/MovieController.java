@@ -20,43 +20,64 @@ public class MovieController {
 	private final JsonUtils jsonUtils;
 
 	public void save(MovieDto movieDto) {
+		log.info("Starting method save with MovieDto: {}", movieDto);
+
 		movieService.save(movieDto);
 
 		final String json = jsonUtils.getJson(movieDto);
-		log.info("Method to save to MovieController - " + json);
+		log.info("Ending method save: {}", json);
 	}
 
 	public MovieDto findById(long id) {
+		log.info("Starting method findById with id: {}", id);
+
 		final MovieDto movieDto = movieService.findById(id);
 
 		final String json = jsonUtils.getJson(movieDto);
-		log.info("Method to findById to MovieController - " + json);
+		log.info("Ending method findById: {}", json);
 
 		return movieDto;
 	}
 
 	public List<MovieDto> findByName(String genreName) {
+		log.info("Starting method findByName with genreName: {}", genreName);
+
 		final List<MovieDto> movieDtoList = movieService.findByGenre(genreName);
 
 		final String json = jsonUtils.getJson(movieDtoList);
-		log.info("Method to findByName to MovieController - " + json);
+		log.info("Ending method findByName: {}", json);
 
 		return movieDtoList;
 	}
 
-	public void updateById(long id, MovieDto movieDtoUpdate) {
-		movieService.updateById(id, movieDtoUpdate);
+	public List<MovieDto> findAll() {
+		log.info("Starting method findAll");
+
+		final List<MovieDto> movieDtoList = movieService.findAll();
+
+		final String json = jsonUtils.getJson(movieDtoList);
+		log.info("Ending method findAll: {}", json);
+
+		return movieDtoList;
+	}
+
+	public void update(MovieDto movieDtoUpdate) {
+		log.info("Starting method update with MovieDto: {}", movieDtoUpdate);
+
+		movieService.update(movieDtoUpdate);
 
 		final String json = jsonUtils.getJson(movieDtoUpdate);
-		log.info("Method to updateById to MovieController - " + json);
+		log.info("Ending method update: {}", json);
 	}
 
 	public void deleteById(long id) {
+		log.info("Starting method deleteById with id: {}", id);
+
 		movieService.deleteById(id);
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("Message", "Movie with Id " + id + " has been successfully deleted");
+		response.put("Message", String.format("Movie with Id %d has been successfully deleted", id));
 		String json = jsonUtils.getJson(response);
-		log.info(json);
+		log.info("Ending method deleteById. Deletion response: {}", json);
 	}
 }

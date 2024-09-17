@@ -11,7 +11,9 @@ public interface GenreService {
 
 	GenreDto findByName(String name);
 
-	void updateById(long id, GenreDto genreDtoUpdate);
+	List<GenreDto> findAll();
+
+	void update(GenreDto genreDtoUpdate);
 
 	List<GenreDto> findAllByNames(List<String> genreNames);
 

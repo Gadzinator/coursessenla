@@ -20,4 +20,5 @@
     <include file="changelogs/homework-2/create-movie-actor-table.sql"/>
     <include file="changelogs/homework-2/add-index-profile-user-id.sql"/>
     <include file="changelogs/homework-2/add-index-playlist-user-id.sql"/>
+    <include file="changelogs/homework-2/alter-table-character-info.sql"/>
 </databaseChangeLog>

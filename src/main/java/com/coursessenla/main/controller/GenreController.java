@@ -20,52 +20,75 @@ public class GenreController {
 	private final JsonUtils jsonUtils;
 
 	public void save(GenreDto genreDto) {
+		log.info("Starting method save with GenreDto: {}", genreDto);
+
 		genreService.save(genreDto);
 
 		final String json = jsonUtils.getJson(genreDto);
-		log.info("Method to save to GenreController - " + json);
+		log.info("Ending method save: {}", json);
 	}
 
 	public GenreDto findById(long id) {
+		log.info("Starting method findById with id: {}", id);
+
 		final GenreDto genreDto = genreService.findById(id);
 
 		final String json = jsonUtils.getJson(genreDto);
-		log.info("Method to findById to GenreController - " + json);
+		log.info("Ending method findById: {}", json);
 
 		return genreDto;
 	}
 
 	public GenreDto findByName(String name) {
+		log.info("Starting method findByName with name: {}", name);
+
 		final GenreDto genreDto = genreService.findByName(name);
 
 		final String json = jsonUtils.getJson(genreDto);
-		log.info("Method to findByName to GenreController - " + json);
+		log.info("Ending method findByName: {}", json);
 
 		return genreDto;
 	}
 
-	public void updateById(long id, GenreDto genreDtoUpdate) {
-		genreService.updateById(id, genreDtoUpdate);
+	public void update(GenreDto genreDtoUpdate) {
+		log.info("Starting method update with GenreDto: {}", genreDtoUpdate);
+
+		genreService.update(genreDtoUpdate);
 
 		final String json = jsonUtils.getJson(genreDtoUpdate);
-		log.info("Method to updateById to GenreController - " + json);
+		log.info("Ending method update: {}", json);
 	}
 
 	public List<GenreDto> findAllByName(List<String> genreNames) {
+		log.info("Starting method findAllByName with genreNames: {}", genreNames);
+
 		final List<GenreDto> genreDtoList = genreService.findAllByNames(genreNames);
 
 		final String json = jsonUtils.getJson(genreDtoList);
-		log.info("Method to findAllByName to GenreController - " + json);
+		log.info("Ending method findAllByName: {}", json);
+
+		return genreDtoList;
+	}
+
+	public List<GenreDto> findAll() {
+		log.info("Starting method findAll");
+
+		final List<GenreDto> genreDtoList = genreService.findAll();
+
+			final String json = jsonUtils.getJson(genreDtoList);
+			log.info("Ending method findAll: {}", json);
 
 		return genreDtoList;
 	}
 
 	public void deleteById(long id) {
+		log.info("Starting method deleteById with id: {}", id);
+
 		genreService.deleteById(id);
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("Message", "Genre with Id " + id + " has been successfully deleted");
+		response.put("Message", String.format("Genre with Id %d has been successfully deleted", id));
 		String json = jsonUtils.getJson(response);
-		log.info(json);
+		log.info("Ending method deleteById. Deletion response: {}", json);
 	}
 }

@@ -2,6 +2,8 @@ package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.ActorDto;
 
+import java.util.List;
+
 public interface ActorService {
 	void save(ActorDto actorDto);
 
@@ -9,7 +11,9 @@ public interface ActorService {
 
 	ActorDto findByName(String name);
 
-	void update(long id, ActorDto actorDto);
+	List<ActorDto> findAll();
+
+	void update(ActorDto actorDto);
 
 	void deleteById(long id);
 }

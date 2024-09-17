@@ -5,10 +5,12 @@ import com.coursessenla.main.domain.dto.MovieDto;
 import com.coursessenla.main.domain.entity.Genre;
 import com.coursessenla.main.domain.entity.Movie;
 import com.coursessenla.main.mapper.GenericMapper;
-import com.coursessenla.main.repository.MovieRepository;
+import com.coursessenla.main.repository.impl.MovieRepositoryImpl;
 import com.coursessenla.main.service.GenreService;
+import com.coursessenla.main.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,12 +19,13 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class MovieServiceImpl implements com.coursessenla.main.service.MovieService {
+public class MovieServiceImpl implements MovieService {
 
-	private final MovieRepository movieRepository;
+	private final MovieRepositoryImpl movieRepository;
 	private final GenreService genreService;
 	private final GenericMapper mapper;
 
+	@Transactional
 	@Override
 	public void save(MovieDto movieDto) {
 		final List<String> genreNames = movieDto.getGenres().stream()
@@ -60,11 +63,20 @@ public class MovieServiceImpl implements com.coursessenla.main.service.MovieServ
 	}
 
 	@Override
-	public void updateById(long id, MovieDto movieDtoUpdate) {
-		findById(id);
-		movieRepository.updateById(id, mapper.mapToDto(movieDtoUpdate, Movie.class));
+	public List<MovieDto> findAll() {
+		return movieRepository.findAll().stream()
+				.map(movie -> mapper.mapToDto(movie, MovieDto.class))
+				.collect(Collectors.toList());
 	}
 
+	@Transactional
+	@Override
+	public void update(MovieDto movieDtoUpdate) {
+		findById(movieDtoUpdate.getId());
+		movieRepository.update(mapper.mapToDto(movieDtoUpdate, Movie.class));
+	}
+
+	@Transactional
 	@Override
 	public void deleteById(long id) {
 		findById(id);

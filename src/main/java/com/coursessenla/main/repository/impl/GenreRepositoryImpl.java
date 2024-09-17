@@ -1,55 +1,36 @@
 package com.coursessenla.main.repository.impl;
 
 import com.coursessenla.main.domain.entity.Genre;
+import com.coursessenla.main.repository.AbstractDao;
 import com.coursessenla.main.repository.GenreRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
 
 @Repository
-public class GenreRepositoryImpl implements GenreRepository {
+public class GenreRepositoryImpl extends AbstractDao<Genre, Long> implements GenreRepository {
 
-	private final List<Genre> genres = new ArrayList<>();
+	@PersistenceContext
+	private EntityManager entityManager;
 
-	@Override
-	public void save(Genre genre) {
-		genres.add(genre);
-	}
-
-	@Override
-	public Optional<Genre> findById(long id) {
-		return genres.stream()
-				.filter(genre -> genre.getId() == id)
-				.findFirst();
+	protected GenreRepositoryImpl() {
+		super(Genre.class);
 	}
 
 	@Override
 	public Optional<Genre> findByName(String name) {
-		return genres.stream()
-				.filter(genre -> genre.getName().equals(name))
-				.findFirst();
-	}
+		try {
+			final Genre genre = entityManager.createQuery(
+							"SELECT g FROM Genre g JOIN FETCH g.movies WHERE g.name = :name", Genre.class)
+					.setParameter("name", name)
+					.getSingleResult();
 
-	@Override
-	public List<Genre> findAll() {
-		return genres;
-	}
-
-	@Override
-	public void updateById(long id, Genre genreUpdate) {
-		final OptionalInt indexOptional = IntStream.range(0, genres.size())
-				.filter(i -> genres.get(i).getId() == id)
-				.findFirst();
-
-		indexOptional.ifPresent(index -> genres.set(index, genreUpdate));
-	}
-
-	@Override
-	public void deleteById(long id) {
-		genres.removeIf(genre -> genre.getId() == id);
+			return Optional.of(genre);
+		} catch (NoResultException e) {
+			return Optional.empty();
+		}
 	}
 }

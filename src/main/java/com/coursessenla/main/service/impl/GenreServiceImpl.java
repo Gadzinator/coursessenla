@@ -3,13 +3,13 @@ package com.coursessenla.main.service.impl;
 import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.domain.entity.Genre;
 import com.coursessenla.main.mapper.GenericMapper;
-import com.coursessenla.main.repository.GenreRepository;
+import com.coursessenla.main.repository.impl.GenreRepositoryImpl;
 import com.coursessenla.main.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -19,9 +19,10 @@ import java.util.stream.Collectors;
 @Service
 public class GenreServiceImpl implements GenreService {
 
-	private final GenreRepository genreRepository;
+	private final GenreRepositoryImpl genreRepository;
 	private final GenericMapper mapper;
 
+	@Transactional
 	@Override
 	public void save(GenreDto genreDto) {
 		genreRepository.save(mapper.mapToDto(genreDto, Genre.class));
@@ -42,9 +43,17 @@ public class GenreServiceImpl implements GenreService {
 	}
 
 	@Override
-	public void updateById(long id, GenreDto genreDtoUpdate) {
-		findById(id);
-		genreRepository.updateById(id, mapper.mapToDto(genreDtoUpdate, Genre.class));
+	public List<GenreDto> findAll() {
+		return genreRepository.findAll().stream()
+				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
+				.collect(Collectors.toList());
+	}
+
+	@Transactional
+	@Override
+	public void update(GenreDto genreDtoUpdate) {
+		findById(genreDtoUpdate.getId());
+		genreRepository.update(mapper.mapToDto(genreDtoUpdate, Genre.class));
 	}
 
 	@Override
@@ -60,7 +69,6 @@ public class GenreServiceImpl implements GenreService {
 			} else {
 				Genre newGenre = new Genre();
 				newGenre.setName(genreName);
-				newGenre.setId(findLastId() + 1);
 				genreRepository.save(newGenre);
 				genreDtoList.add(mapper.mapToDto(newGenre, GenreDto.class));
 			}
@@ -69,18 +77,10 @@ public class GenreServiceImpl implements GenreService {
 		return genreDtoList;
 	}
 
+	@Transactional
 	@Override
 	public void deleteById(long id) {
 		findById(id);
 		genreRepository.deleteById(id);
-	}
-
-	private long findLastId() {
-		final List<Genre> genreList = genreRepository.findAll();
-
-		return genreList.stream()
-				.map(Genre::getId)
-				.max(Comparator.naturalOrder())
-				.orElseThrow(() -> new RuntimeException("No genres found"));
 	}
 }

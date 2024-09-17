@@ -1,50 +1,42 @@
 package com.coursessenla.main.repository.impl;
 
 import com.coursessenla.main.domain.entity.Actor;
+import com.coursessenla.main.domain.entity.Actor_;
+import com.coursessenla.main.repository.AbstractDao;
 import com.coursessenla.main.repository.ActorRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
 
 @Repository
-public class ActorRepositoryImpl implements ActorRepository {
+public class ActorRepositoryImpl extends AbstractDao<Actor, Long> implements ActorRepository {
 
-	private final List<Actor> actors = new ArrayList<>();
+	@PersistenceContext
+	private EntityManager entityManager;
 
-	@Override
-	public void save(Actor actor) {
-		actors.add(actor);
-	}
-
-	@Override
-	public Optional<Actor> findById(long id) {
-		return actors.stream()
-				.filter(actor -> actor.getId() == id)
-				.findFirst();
+	protected ActorRepositoryImpl() {
+		super(Actor.class);
 	}
 
 	@Override
 	public Optional<Actor> findByName(String name) {
-		return actors.stream()
-				.filter(actor -> actor.getName().equals(name))
-				.findFirst();
-	}
+		final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		final CriteriaQuery<Actor> criteriaQuery = criteriaBuilder.createQuery(Actor.class);
+		final Root<Actor> root = criteriaQuery.from(Actor.class);
+		criteriaQuery.select(root);
+		criteriaQuery.where(criteriaBuilder.equal(root.get(Actor_.name), name));
 
-	@Override
-	public void updateById(long id, Actor actorUpdate) {
-		final OptionalInt indexOptional = IntStream.range(0, actors.size())
-				.filter(i -> actors.get(i).getId() == id)
-				.findFirst();
-
-		indexOptional.ifPresent(index -> actors.set(index, actorUpdate));
-	}
-
-	@Override
-	public void deleteById(long id) {
-		actors.removeIf(actor -> actor.getId() == id);
+		try {
+			final Actor result = entityManager.createQuery(criteriaQuery).getSingleResult();
+			return Optional.ofNullable(result);
+		} catch (NoResultException e) {
+			return Optional.empty();
+		}
 	}
 }

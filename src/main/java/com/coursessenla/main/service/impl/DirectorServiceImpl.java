@@ -3,20 +3,24 @@ package com.coursessenla.main.service.impl;
 import com.coursessenla.main.domain.dto.DirectorDto;
 import com.coursessenla.main.domain.entity.Director;
 import com.coursessenla.main.mapper.GenericMapper;
-import com.coursessenla.main.repository.DirectorRepository;
+import com.coursessenla.main.repository.impl.DirectorRepositoryImpl;
 import com.coursessenla.main.service.DirectorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class DirectorServiceImpl implements DirectorService {
 
-	private final DirectorRepository directorRepository;
+	private final DirectorRepositoryImpl directorRepository;
 	private final GenericMapper mapper;
 
+	@Transactional
 	@Override
 	public void save(DirectorDto directorDto) {
 		directorRepository.save(mapper.mapToDto(directorDto, Director.class));
@@ -37,11 +41,20 @@ public class DirectorServiceImpl implements DirectorService {
 	}
 
 	@Override
-	public void updateById(long id, DirectorDto directorDtoUpdate) {
-		findById(id);
-		directorRepository.updateById(id, mapper.mapToDto(directorDtoUpdate, Director.class));
+	public List<DirectorDto> findAll() {
+		return directorRepository.findAll().stream()
+				.map(director -> mapper.mapToDto(director, DirectorDto.class))
+				.collect(Collectors.toList());
 	}
 
+	@Transactional
+	@Override
+	public void update(DirectorDto directorDtoUpdate) {
+		findById(directorDtoUpdate.getId());
+		directorRepository.update(mapper.mapToDto(directorDtoUpdate, Director.class));
+	}
+
+	@Transactional
 	@Override
 	public void deleteById(long id) {
 		findById(id);
