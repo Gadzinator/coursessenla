@@ -7,12 +7,14 @@ import com.coursessenla.main.repository.impl.config.LiquibaseConfigTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,10 +84,13 @@ class ProfileRepositoryImplTest {
 		profileRepository.save(firstProfile);
 		profileRepository.save(secondProfile);
 
-		final List<Profile> profileList = profileRepository.findAll();
-		assertNotNull(profileList);
-		assertTrue(profileList.contains(firstProfile));
-		assertTrue(profileList.contains(secondProfile));
+		Pageable pageable = PageRequest.of(0, 10);
+
+		final Page<Profile> profilePage = profileRepository.findAll(pageable);
+
+		assertNotNull(profilePage);
+		assertEquals(10, profilePage.getContent().size());
+		assertEquals(52, profilePage.getTotalElements());
 	}
 
 	@Test

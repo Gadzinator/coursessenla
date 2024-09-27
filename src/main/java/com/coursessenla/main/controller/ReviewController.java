@@ -1,72 +1,77 @@
 package com.coursessenla.main.controller;
 
-import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.ReviewDto;
 import com.coursessenla.main.service.ReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
+@RequestMapping("/reviews")
 public class ReviewController {
 
 	private final ReviewService reviewService;
-	private final JsonUtils jsonUtils;
 
-	public void save(ReviewDto reviewDto) {
+	@PostMapping
+	public ResponseEntity<?> save(@RequestBody @Valid ReviewDto reviewDto) {
 		log.info("Starting method save with ReviewDto: {}", reviewDto);
-
 		reviewService.save(reviewDto);
+		log.info("Ending method save: {}", reviewDto);
 
-		String json = jsonUtils.getJson(reviewDto);
-		log.info("Ending method save: {}", json);
+		return new ResponseEntity<>(reviewDto, HttpStatus.CREATED);
 	}
 
-	public ReviewDto findById(long id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<ReviewDto> findById(@PathVariable("id") Long id) {
 		log.info("Starting method findById with id: {}", id);
-
 		final ReviewDto reviewDto = reviewService.findById(id);
+		log.info("Ending method findById: {}", reviewDto);
 
-		String json = jsonUtils.getJson(reviewDto);
-		log.info("Ending method findById: {}", json);
-
-		return reviewDto;
+		return new ResponseEntity<>(reviewDto, HttpStatus.OK);
 	}
 
-	public List<ReviewDto> findAll() {
-		log.info("Starting method findAll in ReviewController");
+	@GetMapping
+	public ResponseEntity<Page<ReviewDto>> findAll(@RequestParam(value = "page", defaultValue = "0") int page,
+												   @RequestParam(value = "size", defaultValue = "50") int size) {
+		log.info("Starting method findAll with page: {} and size: {}", page, size);
+		Pageable pageable = PageRequest.of(page, size);
+		final Page<ReviewDto> reviewDtoPage = reviewService.findAll(pageable);
+		log.info("Ending method findAll in ReviewController {}", reviewDtoPage);
 
-		final List<ReviewDto> reviewDtoList = reviewService.findAll();
-
-		final String json = jsonUtils.getJson(reviewDtoList);
-		log.info("Ending method findAll in ReviewController {}", json);
-
-		return reviewDtoList;
+		return new ResponseEntity<>(reviewDtoPage, HttpStatus.OK);
 	}
 
-	public void update(ReviewDto reviewDtoUpdate) {
+	@PutMapping
+	public ResponseEntity<?> update(@RequestBody @Valid ReviewDto reviewDtoUpdate) {
 		log.info("Starting method update with ReviewDto: {}", reviewDtoUpdate);
-
 		reviewService.update(reviewDtoUpdate);
+		log.info("Ending method update: {}", reviewDtoUpdate);
 
-		String json = jsonUtils.getJson(reviewDtoUpdate);
-		log.info("Ending method update: {}", json);
+		return new ResponseEntity<>(reviewDtoUpdate, HttpStatus.OK);
 	}
 
-	public void deleteById(long id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
 		log.info("Starting method deleteById with id: {}", id);
-
 		reviewService.deleteById(id);
+		log.info("Ending method deleteById.");
 
-		Map<String, Object> response = new HashMap<>();
-		response.put("Message", String.format("Review with Id %d has been successfully deleted", id));
-		String json = jsonUtils.getJson(response);
-		log.info("Ending method deleteById. Deletion response: {}", json);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

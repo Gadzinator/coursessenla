@@ -2,19 +2,18 @@ package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.GenreDto;
 import com.coursessenla.main.domain.entity.Genre;
+import com.coursessenla.main.exception.GenreNotFoundException;
 import com.coursessenla.main.mapper.GenericMapper;
 import com.coursessenla.main.repository.impl.GenreRepositoryImpl;
 import com.coursessenla.main.service.GenreService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class GenreServiceImpl implements GenreService {
@@ -25,62 +24,66 @@ public class GenreServiceImpl implements GenreService {
 	@Transactional
 	@Override
 	public void save(GenreDto genreDto) {
-		genreRepository.save(mapper.mapToDto(genreDto, Genre.class));
+		log.info("Starting method save: {}", genreDto);
+		genreRepository.save(mapper.mapToEntity(genreDto, Genre.class));
+		log.info("Ending method save: {}", genreDto);
 	}
 
+	@Transactional
 	@Override
 	public GenreDto findById(long id) {
-		return genreRepository.findById(id)
-				.map(genre -> mapper.mapToEntity(genre, GenreDto.class))
-				.orElseThrow(() -> new NoSuchElementException(String.format("Genre with id %d was not found", id)));
+		log.info("Starting method findById: {}", id);
+		final GenreDto genreDto = genreRepository.findById(id)
+				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
+				.orElseThrow(() -> new GenreNotFoundException(String.format("Genre with id %d was not found", id)));
+		log.info("Ending method findById: {}", genreDto);
+
+		return genreDto;
 	}
 
+	@Transactional
 	@Override
 	public GenreDto findByName(String name) {
-		return genreRepository.findByName(name)
+		log.info("Starting method findByName: {}", name);
+		final GenreDto genreDto = genreRepository.findByName(name)
 				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
-				.orElseThrow(() -> new NoSuchElementException(String.format("Genre with name %s was not found", name)));
+				.orElseThrow(() -> new GenreNotFoundException(String.format("Genre with name %s was not found", name)));
+		log.info("Ending method findByName: {}", genreDto);
+
+		return genreDto;
 	}
 
 	@Override
-	public List<GenreDto> findAll() {
-		return genreRepository.findAll().stream()
-				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
-				.collect(Collectors.toList());
+	public Page<GenreDto> findAll(Pageable pageable) {
+		log.info("Starting method findAll: {}", pageable);
+		final Page<GenreDto> genreDtoPage = genreRepository.findAll(pageable)
+				.map(genre -> mapper.mapToDto(genre, GenreDto.class));
+
+		if (genreDtoPage.isEmpty()) {
+			log.warn("No genre were found, throwing DirectorNotFoundException");
+			throw new GenreNotFoundException("No genre were found");
+		}
+
+		log.info("Ending method findAll: {}", genreDtoPage);
+
+		return genreDtoPage;
 	}
 
 	@Transactional
 	@Override
 	public void update(GenreDto genreDtoUpdate) {
+		log.info("Starting method update: {}", genreDtoUpdate);
 		findById(genreDtoUpdate.getId());
-		genreRepository.update(mapper.mapToDto(genreDtoUpdate, Genre.class));
-	}
-
-	@Override
-	public List<GenreDto> findAllByNames(List<String> genreNames) {
-		List<GenreDto> genreDtoList = new ArrayList<>();
-
-		Map<String, Genre> existingGenres = genreRepository.findAll().stream()
-				.collect(Collectors.toMap(Genre::getName, genre -> genre));
-
-		for (String genreName : genreNames) {
-			if (existingGenres.containsKey(genreName)) {
-				genreDtoList.add(mapper.mapToDto(existingGenres.get(genreName), GenreDto.class));
-			} else {
-				Genre newGenre = new Genre();
-				newGenre.setName(genreName);
-				genreRepository.save(newGenre);
-				genreDtoList.add(mapper.mapToDto(newGenre, GenreDto.class));
-			}
-		}
-
-		return genreDtoList;
+		genreRepository.update(mapper.mapToEntity(genreDtoUpdate, Genre.class));
+		log.info("Ending method update: {}", genreDtoUpdate);
 	}
 
 	@Transactional
 	@Override
 	public void deleteById(long id) {
+		log.info("Starting method deleteById: {}", id);
 		findById(id);
 		genreRepository.deleteById(id);
+		log.info("Ending method deleteById: {}", id);
 	}
 }

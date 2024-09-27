@@ -1,83 +1,92 @@
 package com.coursessenla.main.controller;
 
-import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.MovieDto;
 import com.coursessenla.main.service.MovieService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
+@RequestMapping("/movies")
 public class MovieController {
 
 	private final MovieService movieService;
-	private final JsonUtils jsonUtils;
 
-	public void save(MovieDto movieDto) {
+	@PostMapping
+	public ResponseEntity<?> save(@RequestBody @Valid MovieDto movieDto) {
 		log.info("Starting method save with MovieDto: {}", movieDto);
-
 		movieService.save(movieDto);
+		log.info("Ending method save: {}", movieDto);
 
-		final String json = jsonUtils.getJson(movieDto);
-		log.info("Ending method save: {}", json);
+		return new ResponseEntity<>("Movie saved", HttpStatus.CREATED);
 	}
 
-	public MovieDto findById(long id) {
+	@GetMapping("/id/{id}")
+	public ResponseEntity<MovieDto> findById(@PathVariable("id") Long id) {
 		log.info("Starting method findById with id: {}", id);
-
 		final MovieDto movieDto = movieService.findById(id);
+		log.info("Ending method findById: {}", movieDto);
 
-		final String json = jsonUtils.getJson(movieDto);
-		log.info("Ending method findById: {}", json);
-
-		return movieDto;
+		return new ResponseEntity<>(movieDto, HttpStatus.OK);
 	}
 
-	public List<MovieDto> findByName(String genreName) {
+	@GetMapping("/{genreName}")
+	public ResponseEntity<List<MovieDto>> findByName(@PathVariable("genreName") String genreName) {
 		log.info("Starting method findByName with genreName: {}", genreName);
-
 		final List<MovieDto> movieDtoList = movieService.findByGenre(genreName);
 
-		final String json = jsonUtils.getJson(movieDtoList);
-		log.info("Ending method findByName: {}", json);
+		if (movieDtoList.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		log.info("Ending method findByName: {}", movieDtoList);
 
-		return movieDtoList;
+		return new ResponseEntity<>(movieDtoList, HttpStatus.OK);
 	}
 
-	public List<MovieDto> findAll() {
-		log.info("Starting method findAll");
+	@GetMapping
+	public ResponseEntity<Page<MovieDto>> findAll(@RequestParam(value = "page", defaultValue = "0") int page,
+												  @RequestParam(value = "size", defaultValue = "50") int size) {
+		log.info("Starting method findAll with page: {} and size: {}", page, size);
+		Pageable pageable = PageRequest.of(page, size);
+		final Page<MovieDto> movieDtoPage = movieService.findAll(pageable);
+		log.info("Ending method findAll: {}", movieDtoPage);
 
-		final List<MovieDto> movieDtoList = movieService.findAll();
-
-		final String json = jsonUtils.getJson(movieDtoList);
-		log.info("Ending method findAll: {}", json);
-
-		return movieDtoList;
+		return new ResponseEntity<>(movieDtoPage, HttpStatus.OK);
 	}
 
-	public void update(MovieDto movieDtoUpdate) {
+	@PutMapping
+	public ResponseEntity<?> update(@RequestBody @Valid MovieDto movieDtoUpdate) {
 		log.info("Starting method update with MovieDto: {}", movieDtoUpdate);
-
 		movieService.update(movieDtoUpdate);
+		log.info("Ending method update: {}", movieDtoUpdate);
 
-		final String json = jsonUtils.getJson(movieDtoUpdate);
-		log.info("Ending method update: {}", json);
+		return new ResponseEntity<>(movieDtoUpdate, HttpStatus.OK);
 	}
 
-	public void deleteById(long id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
 		log.info("Starting method deleteById with id: {}", id);
-
 		movieService.deleteById(id);
+		log.info("Ending method deleteById.");
 
-		Map<String, Object> response = new HashMap<>();
-		response.put("Message", String.format("Movie with Id %d has been successfully deleted", id));
-		String json = jsonUtils.getJson(response);
-		log.info("Ending method deleteById. Deletion response: {}", json);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

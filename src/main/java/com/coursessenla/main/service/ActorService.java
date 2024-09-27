@@ -1,8 +1,8 @@
 package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.ActorDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ActorService {
 	void save(ActorDto actorDto);
@@ -11,7 +11,7 @@ public interface ActorService {
 
 	ActorDto findByName(String name);
 
-	List<ActorDto> findAll();
+	Page<ActorDto> findAll(Pageable pageable);
 
 	void update(ActorDto actorDto);
 

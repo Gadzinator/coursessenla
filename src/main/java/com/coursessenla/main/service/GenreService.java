@@ -1,6 +1,8 @@
 package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.GenreDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,11 +13,9 @@ public interface GenreService {
 
 	GenreDto findByName(String name);
 
-	List<GenreDto> findAll();
+	Page<GenreDto> findAll(Pageable pageable);
 
 	void update(GenreDto genreDtoUpdate);
-
-	List<GenreDto> findAllByNames(List<String> genreNames);
 
 	void deleteById(long id);
 }

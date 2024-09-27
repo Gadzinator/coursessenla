@@ -1,5 +1,6 @@
 package com.coursessenla.main.domain.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,7 +30,7 @@ public class Playlist {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@ManyToMany(mappedBy = "playlists")
+	@ManyToMany(mappedBy = "playlists", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private List<Movie> movies;
 
 	@Override

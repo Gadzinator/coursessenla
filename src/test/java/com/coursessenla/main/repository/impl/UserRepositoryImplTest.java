@@ -6,12 +6,14 @@ import com.coursessenla.main.repository.impl.config.LiquibaseConfigTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,9 +40,7 @@ class UserRepositoryImplTest {
 
 		final Optional<User> optionalUser = userRepository.findById(USER_ID);
 		assertTrue(optionalUser.isPresent());
-		optionalUser.ifPresent(u -> {
-			assertEquals(USER_EMAIL, u.getEmail());
-		});
+		optionalUser.ifPresent((User u) -> assertEquals(USER_EMAIL, u.getEmail()));
 	}
 
 	@Test
@@ -50,9 +50,7 @@ class UserRepositoryImplTest {
 
 		final Optional<User> optionalUser = userRepository.findById(USER_ID);
 		assertTrue(optionalUser.isPresent());
-		optionalUser.ifPresent(u -> {
-			assertEquals(USER_EMAIL, u.getEmail());
-		});
+		optionalUser.ifPresent(u -> assertEquals(USER_EMAIL, u.getEmail()));
 	}
 
 	@Test
@@ -62,10 +60,13 @@ class UserRepositoryImplTest {
 		userRepository.save(firstUser);
 		userRepository.save(secendtUser);
 
-		final List<User> userList = userRepository.findAll();
-		assertNotNull(userList);
-		assertTrue(userList.contains(firstUser));
-		assertTrue(userList.contains(secendtUser));
+		Pageable pageable = PageRequest.of(0, 10);
+
+		final Page<User> userPage = userRepository.findAll(pageable);
+
+		assertNotNull(userPage);
+		assertEquals(10, userPage.getContent().size());
+		assertEquals(52, userPage.getTotalElements());
 	}
 
 	@Test

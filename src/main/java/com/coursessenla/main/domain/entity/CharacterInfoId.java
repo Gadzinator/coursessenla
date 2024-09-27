@@ -19,4 +19,12 @@ public class CharacterInfoId implements Serializable {
 
 	@Column(name = "actor_id")
 	private Long actorId;
+
+	@Override
+	public String toString() {
+		return "CharacterInfoId{" +
+				"movieId=" + movieId +
+				", actorId=" + actorId +
+				'}';
+	}
 }
