@@ -35,7 +35,7 @@ public class GenreServiceImpl implements GenreService {
 		log.info("Starting method findById: {}", id);
 		final GenreDto genreDto = genreRepository.findById(id)
 				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
-				.orElseThrow(() -> new GenreNotFoundException(String.format("Genre with id %d was not found", id)));
+				.orElseThrow(() -> new GenreNotFoundException(id));
 		log.info("Ending method findById: {}", genreDto);
 
 		return genreDto;
@@ -47,7 +47,7 @@ public class GenreServiceImpl implements GenreService {
 		log.info("Starting method findByName: {}", name);
 		final GenreDto genreDto = genreRepository.findByName(name)
 				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
-				.orElseThrow(() -> new GenreNotFoundException(String.format("Genre with name %s was not found", name)));
+				.orElseThrow(() -> new GenreNotFoundException(name));
 		log.info("Ending method findByName: {}", genreDto);
 
 		return genreDto;
@@ -61,7 +61,7 @@ public class GenreServiceImpl implements GenreService {
 
 		if (genreDtoPage.isEmpty()) {
 			log.warn("No genre were found, throwing DirectorNotFoundException");
-			throw new GenreNotFoundException("No genre were found");
+			throw new GenreNotFoundException();
 		}
 
 		log.info("Ending method findAll: {}", genreDtoPage);

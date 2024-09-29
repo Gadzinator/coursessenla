@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 		log.info("Starting method findById: {}", id);
 		final UserDto userDto = userRepository.findById(id)
 				.map(user -> mapper.mapToDto(user, UserDto.class))
-				.orElseThrow(() -> new UserNotFoundException(String.format("User with id %d was not found", id)));
+				.orElseThrow(() -> new UserNotFoundException(id));
 		log.info("Ending method findById: {}", userDto);
 
 		return userDto;
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 		log.info("Starting method findByEmail: {}", email);
 		final UserDto userDto = userRepository.findByEmail(email)
 				.map(user -> mapper.mapToDto(user, UserDto.class))
-				.orElseThrow(() -> new UserNotFoundException(String.format("User with email %s was not found", email)));
+				.orElseThrow(() -> new UserNotFoundException(email));
 		log.info("Ending method findByEmail: {}", userDto);
 
 		return userDto;
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
 		if (userDtoPage.isEmpty()) {
 			log.warn("No users were found, throwing ReviewNotFoundException");
-			throw new UserNotFoundException("No users were found");
+			throw new UserNotFoundException();
 		}
 
 		log.info("Ending method findAll: {}", userDtoPage);
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
 	public void deleteById(long id) {
 		log.info("Starting method deleteById: {}", id);
 		final User user = userRepository.findById(id)
-				.orElseThrow(() -> new UserNotFoundException(String.format("User with id %d was not found", id)));
+				.orElseThrow(() -> new UserNotFoundException(id));
 		if (user.getPlaylists() != null) {
 			user.getPlaylists().forEach(playlist -> {
 				playlist.getMovies().forEach(movie -> movie.getPlaylists().remove(playlist));

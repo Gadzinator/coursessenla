@@ -42,7 +42,7 @@ public class ActorServiceImpl implements ActorService {
 		log.info("Starting method findById: {}", id);
 		final ActorDto actorDto = actorRepository.findById(id)
 				.map(actor -> mapper.mapToDto(actor, ActorDto.class))
-				.orElseThrow(() -> new ActorNotFoundException(String.format("Actor with id %d was not found", id)));
+				.orElseThrow(() -> new ActorNotFoundException(id));
 		log.info("Ending method findById: {}", actorDto);
 
 		return actorDto;
@@ -54,7 +54,7 @@ public class ActorServiceImpl implements ActorService {
 		log.info("Starting method findByName: {}", name);
 		final ActorDto actorDto = actorRepository.findByName(name)
 				.map(actor -> mapper.mapToDto(actor, ActorDto.class))
-				.orElseThrow(() -> new ActorNotFoundException(String.format("Actor with name %s was not found", name)));
+				.orElseThrow(() -> new ActorNotFoundException(name));
 		log.info("Ending method findByName: {}", actorDto);
 
 		return actorDto;
@@ -70,7 +70,7 @@ public class ActorServiceImpl implements ActorService {
 
 		if (actorDtoPage.isEmpty()) {
 			log.warn("No actors were found, throwing ActorNotFoundException");
-			throw new ActorNotFoundException("No actors were found");
+			throw new ActorNotFoundException();
 		}
 
 		log.info("Ending method findAll. Total elements: {}", actorDtoPage.getTotalElements());

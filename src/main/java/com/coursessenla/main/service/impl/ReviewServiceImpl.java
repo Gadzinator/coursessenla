@@ -13,9 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -38,7 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
 		log.info("Starting method findById: {}", id);
 		final ReviewDto reviewDto = reviewRepository.findById(id)
 				.map(review -> mapper.mapToDto(review, ReviewDto.class))
-				.orElseThrow(() -> new ReviewNotFoundException(String.format("Review with id %d was not found", id)));
+				.orElseThrow(() -> new ReviewNotFoundException(id));
 		log.info("Ending method findById: {}", reviewDto);
 
 		return reviewDto;
@@ -53,7 +50,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 		if (reviewDtoPage.isEmpty()) {
 			log.warn("No reviews were found, throwing ReviewNotFoundException");
-			throw new ReviewNotFoundException("No reviews were found");
+			throw new ReviewNotFoundException();
 		}
 
 		log.info("Ending method findAll: {}", reviewDtoPage);

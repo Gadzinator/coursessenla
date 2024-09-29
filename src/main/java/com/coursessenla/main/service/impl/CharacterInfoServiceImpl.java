@@ -49,8 +49,7 @@ public class CharacterInfoServiceImpl implements CharacterInfoService {
 		log.info("Starting method findById: {}", id);
 		final CharacterInfoDto characterInfoDto = characterInfoRepository.findById(id)
 				.map(characterInfo -> mapper.mapToDto(characterInfo, CharacterInfoDto.class))
-				.orElseThrow(() -> new CharacterInfoNotFoundException(
-						String.format("CharacterInfo with id %s was not found", id)));
+				.orElseThrow(() -> new CharacterInfoNotFoundException(id));
 		log.info("Ending method findById: {}", characterInfoDto);
 
 		return characterInfoDto;
@@ -64,7 +63,7 @@ public class CharacterInfoServiceImpl implements CharacterInfoService {
 
 		if (characterInfoDtoList.isEmpty()) {
 			log.warn("No characterInfo were found, throwing CharacterInfoNotFoundException");
-			throw new CharacterInfoNotFoundException("No characterInfo were found");
+			throw new CharacterInfoNotFoundException();
 		}
 
 		log.info("Ending method findAll: {}", characterInfoDtoList);

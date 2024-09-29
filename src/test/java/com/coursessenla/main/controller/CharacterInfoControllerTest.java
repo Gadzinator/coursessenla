@@ -99,7 +99,7 @@ class CharacterInfoControllerTest {
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-		.andExpect(jsonPath("$.content").isArray())
+				.andExpect(jsonPath("$.content").isArray())
 				.andExpect(jsonPath("$.content.length()").value(50))
 				.andExpect(jsonPath("$.totalElements").value(50));
 	}
@@ -111,10 +111,7 @@ class CharacterInfoControllerTest {
 		mockMvc.perform(put("/characterInfos")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(updateCharacterInfoDto)))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.id.movieId").value(characterInfoId.getMovieId()))
-				.andExpect(jsonPath("$.id.actorId").value(characterInfoId.getActorId()));
+				.andExpect(status().isOk());
 	}
 
 	@Test

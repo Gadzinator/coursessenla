@@ -50,7 +50,7 @@ public class MovieServiceImpl implements MovieService {
 	public MovieDto findById(long id) {
 		log.info("Starting method findById: {}", id);
 		final Movie movie = movieRepository.findById(id)
-				.orElseThrow(() -> new MovieNotFoundException(String.format("Movie with id %d was not found", id)));
+				.orElseThrow(() -> new MovieNotFoundException(id));
 
 		List<GenreDto> genreDtoList = movie.getGenres().stream()
 				.map(genre -> mapper.mapToDto(genre, GenreDto.class))
@@ -70,7 +70,7 @@ public class MovieServiceImpl implements MovieService {
 		List<Movie> movies = movieRepository.findByGenre(genreName);
 		if (movies.isEmpty()) {
 			log.info("No movies found for genre: {}", genreName);
-			throw new MovieNotFoundException("No movies were found");
+			throw new MovieNotFoundException();
 		}
 
 		final List<MovieDto> movieDtoList = movies.stream()
@@ -90,7 +90,7 @@ public class MovieServiceImpl implements MovieService {
 
 		if (movieDtoPage.isEmpty()) {
 			log.info("No movies found for genre");
-			throw new MovieNotFoundException("No movies were found");
+			throw new MovieNotFoundException();
 		}
 		log.info("Ending method findAll: {}", movieDtoPage);
 

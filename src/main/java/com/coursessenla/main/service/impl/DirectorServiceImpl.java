@@ -35,7 +35,7 @@ public class DirectorServiceImpl implements DirectorService {
 		log.info("Starting method findById: {}", id);
 		final DirectorDto directorDto = directorRepository.findById(id)
 				.map(director -> mapper.mapToDto(director, DirectorDto.class))
-				.orElseThrow(() -> new DirectorNotFoundException(String.format("Director with id %d was not found", id)));
+				.orElseThrow(() -> new DirectorNotFoundException(id));
 		log.info("Ending method findById: {}", directorDto);
 
 		return directorDto;
@@ -46,7 +46,7 @@ public class DirectorServiceImpl implements DirectorService {
 		log.info("Starting method findByName: {}", name);
 		final DirectorDto directorDto = directorRepository.findByName(name)
 				.map(director -> mapper.mapToDto(director, DirectorDto.class))
-				.orElseThrow(() -> new DirectorNotFoundException(String.format("Director with name %s was not found", name)));
+				.orElseThrow(() -> new DirectorNotFoundException(name));
 		log.info("Ending method findByName: {}", directorDto);
 
 		return directorDto;
@@ -60,7 +60,7 @@ public class DirectorServiceImpl implements DirectorService {
 
 		if (directorDtoPage.isEmpty()) {
 			log.warn("No director were found, throwing DirectorNotFoundException");
-			throw new DirectorNotFoundException("No director were found");
+			throw new DirectorNotFoundException();
 		}
 
 		log.info("Ending method findAll: {}", directorDtoPage);

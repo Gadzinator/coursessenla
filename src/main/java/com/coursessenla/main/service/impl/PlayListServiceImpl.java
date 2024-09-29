@@ -13,9 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -37,7 +34,7 @@ public class PlayListServiceImpl implements PlayListService {
 		log.info("Starting method findById: {}", id);
 		final PlayListDto playListDto = playListRepository.findById(id)
 				.map(playlist -> mapper.mapToDto(playlist, PlayListDto.class))
-				.orElseThrow(() -> new PlayListNotFoundException(String.format("Playlist with id %d was not found", id)));
+				.orElseThrow(() -> new PlayListNotFoundException(id));
 		log.info("Ending method findById: {}", playListDto);
 
 		return playListDto;
@@ -51,7 +48,7 @@ public class PlayListServiceImpl implements PlayListService {
 
 		if (playListDtoPage.isEmpty()) {
 			log.warn("No playlists were found, throwing PlayListNotFoundException");
-			throw new PlayListNotFoundException("No playlists were found");
+			throw new PlayListNotFoundException();
 		}
 
 		log.info("Ending method findAll: {}", playListDtoPage);
