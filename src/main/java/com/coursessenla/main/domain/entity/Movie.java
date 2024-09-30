@@ -63,7 +63,7 @@ public class Movie {
 	)
 	private List<Playlist> playlists;
 
-	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "movie")
 	private List<Review> reviews;
 
 	@Override

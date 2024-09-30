@@ -9,6 +9,9 @@ import com.coursessenla.main.repository.impl.config.LiquibaseConfigTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -86,9 +89,13 @@ class ReviewRepositoryImplTest {
 		movieRepository.save(movie);
 		reviewRepository.save(review);
 
-		final List<Review> reviewList = reviewRepository.findAll();
-		assertNotNull(reviewList);
-		assertTrue(reviewList.contains(review));
+		Pageable pageable = PageRequest.of(0, 10);
+
+		final Page<Review> reviewPage = reviewRepository.findAll(pageable);
+
+		assertNotNull(reviewPage);
+		assertEquals(10, reviewPage.getContent().size());
+		assertEquals(51, reviewPage.getTotalElements());
 	}
 
 	@Test

@@ -1,6 +1,8 @@
 package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.ReviewDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -9,7 +11,7 @@ public interface ReviewService {
 
 	ReviewDto findById(long id);
 
-	List<ReviewDto> findAll();
+	Page<ReviewDto> findAll(Pageable pageable);
 
 	void update(ReviewDto reviewDtoUpdate);
 

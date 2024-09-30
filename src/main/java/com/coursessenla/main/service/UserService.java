@@ -2,6 +2,8 @@ package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.RegistrationUserDto;
 import com.coursessenla.main.domain.dto.UserDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface UserService {
 
 	UserDto findByEmail(String email);
 
-	List<UserDto> findAll();
+	Page<UserDto> findAll(Pageable pageable);
 
 	void deleteById(long id);
 }

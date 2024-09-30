@@ -1,83 +1,82 @@
 package com.coursessenla.main.controller;
 
-import com.coursessenla.main.controller.utils.JsonUtils;
 import com.coursessenla.main.domain.dto.ActorDto;
 import com.coursessenla.main.service.ActorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
+@RequestMapping("/actors")
 public class ActorController {
 
 	private final ActorService actorService;
-	private final JsonUtils jsonUtils;
 
-	public void save(ActorDto actorDto) {
-		log.info("Starting method save");
-
+	@ResponseStatus(HttpStatus.CREATED)
+	@PostMapping
+	public void save(@RequestBody @Valid ActorDto actorDto) {
+		log.info("Starting method save: {}", actorDto);
 		actorService.save(actorDto);
-
-		final String json = jsonUtils.getJson(actorDto);
-		log.info("Ending method save: {}", json);
+		log.info("Ending method save: {}", actorDto);
 	}
 
-	public ActorDto findById(long id) {
+	@GetMapping("/id/{id}")
+	public ActorDto findById(@PathVariable(value = "id") Long id) {
 		log.info("Starting method findById with id: {}", id);
-
 		final ActorDto actorDto = actorService.findById(id);
-
-		final String json = jsonUtils.getJson(actorDto);
-		log.info("Ending method findById {}", json);
+		log.info("Ending method findById {}", actorDto);
 
 		return actorDto;
 	}
 
-	public ActorDto findByName(String name) {
+	@GetMapping("/{name}")
+	public ActorDto findByName(@PathVariable(value = "name") String name) {
 		log.info("Starting method findByName with name: {}", name);
-
 		final ActorDto actorDto = actorService.findByName(name);
-
-		final String json = jsonUtils.getJson(actorDto);
-		log.info("Ending method findByName: {}", json);
+		log.info("Ending method findByName: {}", actorDto);
 
 		return actorDto;
 	}
 
-	public List<ActorDto> findAll() {
-		log.info("Starting method findAll");
+	@GetMapping()
+	public Page<ActorDto> findAll(@RequestParam(value = "page", defaultValue = "0") int page,
+								  @RequestParam(value = "size", defaultValue = "50") int size) {
+		log.info("Starting method findAll with page: {} and size: {}", page, size);
+		Pageable pageable = PageRequest.of(page, size);
+		final Page<ActorDto> actorDtoPage = actorService.findAll(pageable);
+		log.info("Ending method findAlle: {}", actorDtoPage.getTotalElements());
 
-		final List<ActorDto> actorDtoList = actorService.findAll();
-
-		final String json = jsonUtils.getJson(actorDtoList);
-		log.info("Ending method findAll: {}", json);
-
-		return actorDtoList;
+		return actorDtoPage;
 	}
 
-	public void update(ActorDto actorDtoUpdate) {
+	@PutMapping
+	public void update(@RequestBody @Valid ActorDto actorDtoUpdate) {
 		log.info("Starting method update with actorDtoUpdate: {}", actorDtoUpdate);
-
 		actorService.update(actorDtoUpdate);
-
-		final String json = jsonUtils.getJson(actorDtoUpdate);
-		log.info("Ending method update {}", json);
+		log.info("Ending method update {}", actorDtoUpdate);
 	}
 
-	public void deleteById(long id) {
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@DeleteMapping("/{id}")
+	public void deleteById(@PathVariable(name = "id") Long id) {
 		log.info("Starting method delete in with id: {}", id);
-
 		actorService.deleteById(id);
-
-		Map<String, Object> response = new HashMap<>();
-		response.put("Message", String.format("Actor with Id %d has been successfully deleted", id));
-		String json = jsonUtils.getJson(response);
-		log.info("Ending method delete. Deletion response: {}", json);
+		log.info("Ending method delete.");
 	}
 }

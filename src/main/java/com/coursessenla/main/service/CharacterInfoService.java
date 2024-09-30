@@ -2,15 +2,15 @@ package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.CharacterInfoDto;
 import com.coursessenla.main.domain.entity.CharacterInfoId;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CharacterInfoService {
 	void save(CharacterInfoDto characterInfoDto);
 
 	CharacterInfoDto findById(CharacterInfoId id);
 
-	List<CharacterInfoDto> findAll();
+	Page<CharacterInfoDto> findAll(Pageable pageable);
 
 	void update(CharacterInfoDto characterInfoDto);
 

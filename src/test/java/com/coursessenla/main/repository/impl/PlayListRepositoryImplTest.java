@@ -9,6 +9,9 @@ import com.coursessenla.main.repository.impl.config.LiquibaseConfigTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -90,10 +93,13 @@ class PlayListRepositoryImplTest {
 		playListRepository.save(firstPlaylist);
 		playListRepository.save(secondPlaylist);
 
-		final List<Playlist> playlists = playListRepository.findAll();
-		assertNotNull(playlists);
-		assertTrue(playlists.contains(firstPlaylist));
-		assertTrue(playlists.contains(secondPlaylist));
+		Pageable pageable = PageRequest.of(0, 10);
+
+		final Page<Playlist> playlistPage = playListRepository.findAll(pageable);
+
+		assertNotNull(playlistPage);
+		assertEquals(10, playlistPage.getContent().size());
+		assertEquals(52, playlistPage.getTotalElements());
 	}
 
 	@Test

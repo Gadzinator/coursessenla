@@ -6,13 +6,15 @@ import com.coursessenla.main.repository.impl.config.LiquibaseConfigTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,10 +66,12 @@ class GenreRepositoryImplTest {
 		genreRepository.save(firstGenre);
 		genreRepository.save(secondGenre);
 
-		final List<Genre> genreList = genreRepository.findAll();
-		assertNotNull(genreList);
-		assertTrue(genreList.contains(firstGenre));
-		assertTrue(genreList.contains(secondGenre));
+		Pageable pageable = PageRequest.of(0, 10);
+
+		final Page<Genre> genrePage = genreRepository.findAll(pageable);
+		assertNotNull(genrePage);
+		assertEquals(10, genrePage.getContent().size());
+		assertEquals(52, genrePage.getTotalElements());
 	}
 
 	@Test

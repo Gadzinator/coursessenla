@@ -8,6 +8,9 @@ import com.coursessenla.main.repository.impl.config.LiquibaseConfigTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -66,10 +69,13 @@ class DirectorRepositoryImplTest {
 		directorRepository.save(firstDirector);
 		directorRepository.save(secondDirector);
 
-		final List<Director> directorList = directorRepository.findAll();
-		assertNotNull(directorList);
-		assertTrue(directorList.contains(firstDirector));
-		assertTrue(directorList.contains(secondDirector));
+		Pageable pageable = PageRequest.of(0, 10);
+
+		Page<Director> directorPage = directorRepository.findAll(pageable);
+
+		assertNotNull(directorPage);
+		assertEquals(10, directorPage.getContent().size());
+		assertEquals(52, directorPage.getTotalElements());
 	}
 
 	@Test

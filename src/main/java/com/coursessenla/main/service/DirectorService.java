@@ -1,8 +1,8 @@
 package com.coursessenla.main.service;
 
 import com.coursessenla.main.domain.dto.DirectorDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface DirectorService {
 	void save(DirectorDto directorDto);
@@ -11,7 +11,7 @@ public interface DirectorService {
 
 	DirectorDto findByName(String name);
 
-	List<DirectorDto> findAll();
+	Page<DirectorDto> findAll(Pageable pageable);
 
 	void update(DirectorDto directorDtoUpdate);
 

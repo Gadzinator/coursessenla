@@ -10,6 +10,9 @@ import com.coursessenla.main.repository.impl.config.LiquibaseConfigTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -87,18 +90,21 @@ class ActorRepositoryImplTest {
 	}
 
 	@Test
-	void testFindAll() {
+	void testFindAllWithPagination() {
 		final Movie movie = createMovie();
 		movieRepository.save(movie);
+
 		final Actor firstActor = createActor();
 		final Actor secondActor = createActor();
 		actorRepository.save(firstActor);
 		actorRepository.save(secondActor);
 
-		final List<Actor> actorList = actorRepository.findAll();
-		assertNotNull(actorList);
-		assertTrue(actorList.contains(firstActor));
-		assertTrue(actorList.contains(secondActor));
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<Actor> actorPage = actorRepository.findAll(pageable);
+
+		assertNotNull(actorPage);
+		assertEquals(10, actorPage.getContent().size());
+		assertEquals(52, actorPage.getTotalElements());
 	}
 
 	@Test

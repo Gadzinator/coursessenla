@@ -16,7 +16,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = "com.coursessenla")
+@ComponentScan(basePackages = "com.coursessenla.main.repository.impl")
 public class H2Config {
 
 	@Bean
