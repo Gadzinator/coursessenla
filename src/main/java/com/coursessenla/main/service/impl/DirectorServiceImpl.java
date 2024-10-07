@@ -25,8 +25,7 @@ public class DirectorServiceImpl implements DirectorService {
 	@Override
 	public void save(DirectorDto directorDto) {
 		log.info("Starting method save: {}", directorDto);
-		final Director director = mapper.mapToEntity(directorDto, Director.class);
-		directorRepository.save(director);
+		directorRepository.save(mapper.mapToEntity(directorDto, Director.class));
 		log.info("Ending method save: {}", directorDto);
 	}
 

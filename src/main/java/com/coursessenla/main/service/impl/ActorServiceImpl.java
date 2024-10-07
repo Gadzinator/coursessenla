@@ -31,8 +31,7 @@ public class ActorServiceImpl implements ActorService {
 	@Override
 	public void save(ActorDto actorDto) {
 		log.info("Starting method save: {}", actorDto);
-		final Actor actor = mapper.mapToEntity(actorDto, Actor.class);
-		actorRepository.save(actor);
+		actorRepository.save(mapper.mapToEntity(actorDto, Actor.class));
 		log.info("Ending method save: {}", actorDto);
 	}
 
@@ -64,7 +63,6 @@ public class ActorServiceImpl implements ActorService {
 	@Override
 	public Page<ActorDto> findAll(Pageable pageable) {
 		log.info("Starting method findAll: {}", pageable);
-		log.info("Starting method findAll with pageable: {}", pageable);
 		final Page<ActorDto> actorDtoPage = actorRepository.findAll(pageable)
 				.map(actor -> mapper.mapToDto(actor, ActorDto.class));
 

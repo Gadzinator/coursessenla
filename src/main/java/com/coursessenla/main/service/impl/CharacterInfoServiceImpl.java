@@ -41,7 +41,7 @@ public class CharacterInfoServiceImpl implements CharacterInfoService {
 		CharacterInfo existingCharacterInfo = characterInfoRepository.findById(characterInfo.getId()).orElse(null);
 		characterInfoRepository.save(Objects.requireNonNullElse(existingCharacterInfo, characterInfo));
 
-		log.info("Ending method save: {}", characterInfoDto);
+		log.info("Ending method save: {}", existingCharacterInfo);
 	}
 
 	@Override

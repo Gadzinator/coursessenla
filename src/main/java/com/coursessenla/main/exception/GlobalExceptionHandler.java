@@ -3,6 +3,7 @@ package com.coursessenla.main.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -65,6 +66,31 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException exception, WebRequest request) {
+		return handleGlobal(exception, request, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(AuthenticationFailedException.class)
+	public ResponseEntity<?> handleAuthenticationFailedException(AuthenticationFailedException exception, WebRequest request) {
+		return handleGlobal(exception, request, HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(EmailNotUniqueException.class)
+	public ResponseEntity<?> handleEmailNotUniqueException(EmailNotUniqueException exception, WebRequest request) {
+		return handleGlobal(exception, request, HttpStatus.CONFLICT);
+	}
+
+	@ExceptionHandler(PasswordMismatchException.class)
+	public ResponseEntity<?> handlePasswordMismatchException(PasswordMismatchException exception, WebRequest request) {
+		return handleGlobal(exception, request, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException exception, WebRequest request) {
+		return handleGlobal(exception, request, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(RoleNotFoundException.class)
+	public ResponseEntity<?> handleRoleNotFoundException(RoleNotFoundException exception, WebRequest request) {
 		return handleGlobal(exception, request, HttpStatus.NOT_FOUND);
 	}
 

@@ -3,11 +3,12 @@ package com.coursessenla.main.service.impl;
 import com.coursessenla.main.domain.dto.RegistrationUserDto;
 import com.coursessenla.main.domain.dto.UserDto;
 import com.coursessenla.main.domain.entity.Profile;
+import com.coursessenla.main.domain.entity.Role;
 import com.coursessenla.main.domain.entity.User;
-import com.coursessenla.main.exception.ReviewNotFoundException;
 import com.coursessenla.main.exception.UserNotFoundException;
 import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.impl.ProfileRepositoryImpl;
+import com.coursessenla.main.repository.impl.RoleRepositoryImpl;
 import com.coursessenla.main.repository.impl.UserRepositoryImpl;
 import com.coursessenla.main.service.impl.config.ServiceTestConfiguration;
 import org.junit.jupiter.api.Test;
@@ -19,19 +20,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -45,6 +47,8 @@ class UserServiceImplTest {
 	private static final long USER_ID = 1;
 	private final static String USER_EMAIL = "testuser@example.com";
 	private static final String USER_PASSWORD = "password";
+	private static final String ROLE_USER = "ROLE_USER";
+	private static final long ROLE_ID = 1;
 
 	@Mock
 	private UserRepositoryImpl userRepository;
@@ -53,7 +57,13 @@ class UserServiceImplTest {
 	private ProfileRepositoryImpl profileRepository;
 
 	@Mock
+	private RoleRepositoryImpl roleRepository;
+
+	@Mock
 	private GenericMapperImpl mapper;
+
+	@Mock
+	private PasswordEncoder passwordEncoder;
 
 	@InjectMocks
 	private UserServiceImpl userService;
@@ -63,8 +73,11 @@ class UserServiceImplTest {
 		final User user = createUser();
 		final UserDto userDto = createUserDto();
 		final RegistrationUserDto registrationUserDto = createRegistrationUserDto();
+		final Role role = createRole();
 
 		when(mapper.mapToEntity(registrationUserDto, User.class)).thenReturn(user);
+		when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+		when(roleRepository.findByName(ROLE_USER)).thenReturn(Optional.of(role));
 		doNothing().when(profileRepository).save(any(Profile.class));
 		doNothing().when(userRepository).save(user);
 		when(mapper.mapToDto(user, UserDto.class)).thenReturn(userDto);
@@ -73,6 +86,7 @@ class UserServiceImplTest {
 
 		verify(mapper).mapToEntity(registrationUserDto, User.class);
 		verify(profileRepository).save(any(Profile.class));
+		verify(roleRepository).findByName(ROLE_USER);
 		verify(userRepository).save(user);
 		verify(mapper).mapToDto(user, UserDto.class);
 		assertEquals(user.getId(), userDto.getId());
@@ -180,7 +194,6 @@ class UserServiceImplTest {
 	@Test
 	void testDeleteByIdWhenUserExist() {
 		final User user = createUser();
-		final UserDto userDto = createUserDto();
 
 		when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
 		doNothing().when(userRepository).deleteById(USER_ID);
@@ -226,5 +239,13 @@ class UserServiceImplTest {
 		registrationUserDto.setEmail(USER_EMAIL);
 
 		return registrationUserDto;
+	}
+
+	private Role createRole() {
+		Role role = new Role();
+		role.setId(ROLE_ID);
+		role.setName(ROLE_USER);
+
+		return role;
 	}
 }

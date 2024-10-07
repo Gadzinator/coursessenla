@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -46,10 +48,11 @@ class CharacterInfoControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply((SecurityMockMvcConfigurers.springSecurity())).build();
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusCreated() throws Exception {
 		final CharacterInfoId characterInfoId = createCharacterInfoId();
 		final CharacterInfoDto characterInfoDto = createCharacterInfoDto(characterInfoId);
@@ -60,6 +63,18 @@ class CharacterInfoControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void testSaveWhenHttpStatusForbidden() throws Exception {
+		final CharacterInfoId characterInfoId = createCharacterInfoId();
+		final CharacterInfoDto characterInfoDto = createCharacterInfoDto(characterInfoId);
+		mockMvc.perform(post("/characterInfos")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(characterInfoDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusBadRequest() throws Exception {
 		mockMvc.perform(post("/characterInfos")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -105,6 +120,7 @@ class CharacterInfoControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenHttpStatusOk() throws Exception {
 		final CharacterInfoId characterInfoId = createCharacterInfoId();
 		CharacterInfoDto updateCharacterInfoDto = createCharacterInfoDto(characterInfoId);
@@ -115,6 +131,18 @@ class CharacterInfoControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void updateWhenHttpStatusForbidden() throws Exception {
+		final CharacterInfoId characterInfoId = createCharacterInfoId();
+		CharacterInfoDto updateCharacterInfoDto = createCharacterInfoDto(characterInfoId);
+		mockMvc.perform(put("/characterInfos")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(updateCharacterInfoDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenActorNotFoundException() throws Exception {
 		final CharacterInfoId characterInfoId = new CharacterInfoId();
 		characterInfoId.setMovieId(51L);
@@ -129,6 +157,18 @@ class CharacterInfoControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void deleteByIdWhenHttpStatusForbidden() throws Exception {
+		final long movieId = 1L;
+		final long actorId = 1L;
+		mockMvc.perform(delete("/characterInfos/id")
+						.param("movieId", Long.toString(movieId))
+						.param("actorId", Long.toString(actorId)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenHttpStatusNoContent() throws Exception {
 		final long movieId = 1L;
 		final long actorId = 1L;
@@ -139,6 +179,7 @@ class CharacterInfoControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenActorNotFoundException() throws Exception {
 		final long movieId = 51L;
 		final long actorId = 51L;
