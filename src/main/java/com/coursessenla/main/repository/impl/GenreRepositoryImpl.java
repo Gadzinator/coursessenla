@@ -24,7 +24,7 @@ public class GenreRepositoryImpl extends AbstractDao<Genre, Long> implements Gen
 	public Optional<Genre> findByName(String name) {
 		try {
 			final Genre genre = entityManager.createQuery(
-							"SELECT g FROM Genre g JOIN FETCH g.movies WHERE g.name = :name", Genre.class)
+							"SELECT g FROM Genre g LEFT JOIN FETCH g.movies WHERE g.name = :name", Genre.class)
 					.setParameter("name", name)
 					.getSingleResult();
 
