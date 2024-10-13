@@ -25,7 +25,6 @@ import org.springframework.test.context.ContextConfiguration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -151,26 +150,19 @@ class ActorServiceImplTest {
 		final ActorDto secondActorDto = createActorDto(characterInfoDto);
 		secondActorDto.setId(2L);
 
-		// Создание pageable
-		Pageable pageable = PageRequest.of(0, 2); // Параметры пагинации: страница 0, размер страницы 2
+		Pageable pageable = PageRequest.of(0, 2);
 
-		// Создание страницы с актерами
 		Page<Actor> actorPage = new PageImpl<>(actorList, pageable, actorList.size());
 
-		// Мокаем поведение репозитория и mapper
 		when(actorRepository.findAll(pageable)).thenReturn(actorPage);
 		when(mapper.mapToDto(firstActor, ActorDto.class)).thenReturn(firstActorDto);
 		when(mapper.mapToDto(secondActor, ActorDto.class)).thenReturn(secondActorDto);
 
-		// Вызываем метод findAll с pageable
 		Page<ActorDto> actualActorDtoPage = actorService.findAll(pageable);
 
-		// Проверяем, что репозиторий и mapper были вызваны
 		verify(actorRepository).findAll(pageable);
 		verify(mapper).mapToDto(firstActor, ActorDto.class);
 		verify(mapper).mapToDto(secondActor, ActorDto.class);
-
-		// Проверяем количество элементов и их наличие
 		assertEquals(2, actualActorDtoPage.getContent().size());
 		assertTrue(actualActorDtoPage.getContent().contains(firstActorDto));
 		assertTrue(actualActorDtoPage.getContent().contains(secondActorDto));

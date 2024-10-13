@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -54,10 +56,11 @@ class DirectorControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply((SecurityMockMvcConfigurers.springSecurity())).build();
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusCreated() throws Exception {
 		final DirectorDto directorDto = createDirectorDto();
 		mockMvc.perform(post("/directors")
@@ -67,6 +70,17 @@ class DirectorControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void testSaveWhenHttpStatusForbidden() throws Exception {
+		final DirectorDto directorDto = createDirectorDto();
+		mockMvc.perform(post("/directors")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(directorDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusBadRequest() throws Exception {
 		mockMvc.perform(post("/directors")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -110,16 +124,17 @@ class DirectorControllerTest {
 
 	@Test
 	void findAllWhenHttpStatusOk() throws Exception {
-			mockMvc.perform(get("/directors")
-							.contentType(MediaType.APPLICATION_JSON))
-					.andExpect(status().isOk())
-					.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-					.andExpect(jsonPath("$.content").isArray())
-					.andExpect(jsonPath("$.content.length()").value(50))
-					.andExpect(jsonPath("$.totalElements").value(50));
+		mockMvc.perform(get("/directors")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.content").isArray())
+				.andExpect(jsonPath("$.content.length()").value(50))
+				.andExpect(jsonPath("$.totalElements").value(50));
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenHttpStatusOk() throws Exception {
 		final DirectorDto directorDto = createDirectorDto();
 		directorDto.setId(DIRECTOR_ID);
@@ -130,6 +145,18 @@ class DirectorControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void updateWhenHttpStatusForbidden() throws Exception {
+		final DirectorDto directorDto = createDirectorDto();
+		directorDto.setId(DIRECTOR_ID);
+		mockMvc.perform(put("/directors", directorDto)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(directorDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenActorNotFoundException() throws Exception {
 		final DirectorDto directorDto = createDirectorDto();
 		directorDto.setId(NOT_FOUND_DIRECTOR_ID);
@@ -142,6 +169,7 @@ class DirectorControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenHttpStatusNoContent() throws Exception {
 		final DirectorDto directorDto = createDirectorDto();
 		directorService.save(directorDto);
@@ -150,6 +178,16 @@ class DirectorControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void deleteByIdWhenHttpStatusForbidden() throws Exception {
+		final DirectorDto directorDto = createDirectorDto();
+		directorService.save(directorDto);
+		mockMvc.perform(delete("/directors/{id}", 51L))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(delete("/directors/{id}", NOT_FOUND_DIRECTOR_ID)
 						.contentType(MediaType.APPLICATION_JSON))

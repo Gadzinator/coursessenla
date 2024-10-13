@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -58,10 +60,11 @@ class MovieControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply((SecurityMockMvcConfigurers.springSecurity())).build();
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusCreated() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		final MovieDto movieDto = createMovieDto(genreDto);
@@ -72,6 +75,18 @@ class MovieControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void testSaveWhenHttpStatusForbidden() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		final MovieDto movieDto = createMovieDto(genreDto);
+		mockMvc.perform(post("/movies")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(movieDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusBadRequest() throws Exception {
 		mockMvc.perform(post("/movies")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -125,6 +140,7 @@ class MovieControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenHttpStatusOk() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		final MovieDto movieDto = createMovieDto(genreDto);
@@ -136,6 +152,19 @@ class MovieControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void updateWhenHttpStatusForbidden() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		final MovieDto movieDto = createMovieDto(genreDto);
+		movieDto.setId(MOVIE_ID);
+		mockMvc.perform(put("/movies", movieDto)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(movieDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenActorNotFoundException() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		genreDto.setId(NOT_FOUND_MOVIE_ID);
@@ -148,6 +177,7 @@ class MovieControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenHttpStatusNoContent() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		final MovieDto movieDto = createMovieDto(genreDto);
@@ -157,6 +187,17 @@ class MovieControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void deleteByIdWhenHttpStatusForbidden() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		final MovieDto movieDto = createMovieDto(genreDto);
+		movieService.save(movieDto);
+		mockMvc.perform(delete("/movies/{id}", 51L))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(delete("/movies/{id}", NOT_FOUND_MOVIE_ID)
 						.contentType(MediaType.APPLICATION_JSON))

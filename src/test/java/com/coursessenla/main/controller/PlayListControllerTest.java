@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -38,7 +40,6 @@ class PlayListControllerTest {
 
 	private static final long PLAYLIST_ID = 1;
 	private static final long NOT_FOUND_PLAYLIST_ID = 51;
-	private static final String PLAYLIST_NAME = "Playlist1";
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -53,10 +54,11 @@ class PlayListControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply((SecurityMockMvcConfigurers.springSecurity())).build();
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void testSaveWhenHttpStatusCreated() throws Exception {
 		final PlayListDto playlistDto = createPlaylistDto();
 		mockMvc.perform(post("/playlists")
@@ -66,6 +68,16 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	void testSaveWhenHttpStatusUnauthorized() throws Exception {
+		final PlayListDto playlistDto = createPlaylistDto();
+		mockMvc.perform(post("/playlists")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(playlistDto)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void testSaveWhenHttpStatusBadRequest() throws Exception {
 		mockMvc.perform(post("/playlists")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -74,6 +86,7 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByIdWhenHttpStatusOk() throws Exception {
 		mockMvc.perform(get("/playlists/{id}", PLAYLIST_ID))
 				.andExpect(status().isOk())
@@ -82,6 +95,13 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	void findByIdWhenHttpStatusUnauthorized() throws Exception {
+		mockMvc.perform(get("/playlists/{id}", PLAYLIST_ID))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(get("/playlists/{id}", NOT_FOUND_PLAYLIST_ID))
 				.andExpect(status().isNotFound())
@@ -90,6 +110,7 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findAllWhenHttpStatusOk() throws Exception {
 		mockMvc.perform(get("/playlists")
 						.contentType(MediaType.APPLICATION_JSON))
@@ -101,6 +122,14 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	void findAllWhenHttpStatusUnauthorized() throws Exception {
+		mockMvc.perform(get("/playlists")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void updateWhenHttpStatusOk() throws Exception {
 		final PlayListDto playlistDto = createPlaylistDto();
 		playlistDto.setId(PLAYLIST_ID);
@@ -111,6 +140,17 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	void updateWhenHttpStatusUnauthorized() throws Exception {
+		final PlayListDto playlistDto = createPlaylistDto();
+		playlistDto.setId(PLAYLIST_ID);
+		mockMvc.perform(put("/playlists", playlistDto)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(playlistDto)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void updateWhenActorNotFoundException() throws Exception {
 		final PlayListDto playlistDto = createPlaylistDto();
 		playlistDto.setId(NOT_FOUND_PLAYLIST_ID);
@@ -123,6 +163,15 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	void deleteByIdWhenHttpStatusUnauthorized() throws Exception {
+		final PlayListDto playlistDto = createPlaylistDto();
+		playListService.save(playlistDto);
+		mockMvc.perform(delete("/playlists/{id}", 51L))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void deleteByIdWhenHttpStatusNoContent() throws Exception {
 		final PlayListDto playlistDto = createPlaylistDto();
 		playListService.save(playlistDto);
@@ -131,6 +180,7 @@ class PlayListControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void deleteByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(delete("/playlists/{id}", NOT_FOUND_PLAYLIST_ID)
 						.contentType(MediaType.APPLICATION_JSON))

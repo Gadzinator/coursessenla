@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -44,7 +46,6 @@ class ReviewControllerTest {
 	private static final long REVIEW_ID = 1;
 	private static final long NOT_FOUND_REVIEW_ID = 51;
 	private static final String GENRE_NAME = "Action";
-	private static final String REVIEW_CONTENT = "Review content 1";
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -59,10 +60,11 @@ class ReviewControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply((SecurityMockMvcConfigurers.springSecurity())).build();
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void testSaveWhenHttpStatusCreated() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		final MovieDto movieDto = createMovieDto(genreDto);
@@ -75,6 +77,19 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	void testSaveWhenHttpStatusUnauthorized() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		final MovieDto movieDto = createMovieDto(genreDto);
+		final UserDto userDto = createUserDto();
+		final ReviewDto reviewDto = createReviewDto(movieDto, userDto);
+		mockMvc.perform(post("/reviews")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(reviewDto)))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void testSaveWhenHttpStatusBadRequest() throws Exception {
 		mockMvc.perform(post("/reviews")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -83,6 +98,7 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByIdWhenHttpStatusOk() throws Exception {
 		mockMvc.perform(get("/reviews/{id}", REVIEW_ID))
 				.andExpect(status().isOk())
@@ -91,6 +107,13 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	void findByIdWhenHttpStatusUnauthorized() throws Exception {
+		mockMvc.perform(get("/reviews/{id}", REVIEW_ID))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(get("/reviews/{id}", NOT_FOUND_REVIEW_ID))
 				.andExpect(status().isNotFound())
@@ -99,6 +122,7 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findAllWhenHttpStatusOk() throws Exception {
 		mockMvc.perform(get("/reviews")
 						.contentType(MediaType.APPLICATION_JSON))
@@ -110,6 +134,14 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	void findAllWhenHttpStatusUnauthorized() throws Exception {
+		mockMvc.perform(get("/reviews")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenHttpStatusOk() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		final MovieDto movieDto = createMovieDto(genreDto);
@@ -123,6 +155,7 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenActorNotFoundException() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		final MovieDto movieDto = createMovieDto(genreDto);
@@ -138,6 +171,7 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenHttpStatusNoContent() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		final MovieDto movieDto = createMovieDto(genreDto);
@@ -149,6 +183,19 @@ class ReviewControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void deleteByIdWhenHttpStatusForbidden() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		final MovieDto movieDto = createMovieDto(genreDto);
+		final UserDto userDto = createUserDto();
+		final ReviewDto reviewDto = createReviewDto(movieDto, userDto);
+		reviewService.save(reviewDto);
+		mockMvc.perform(delete("/reviews/{id}", 51L))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(delete("/reviews/{id}", NOT_FOUND_REVIEW_ID)
 						.contentType(MediaType.APPLICATION_JSON))

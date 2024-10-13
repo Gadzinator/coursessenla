@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -54,10 +56,11 @@ class GenreControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply((SecurityMockMvcConfigurers.springSecurity())).build();
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusCreated() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		mockMvc.perform(post("/genres")
@@ -67,6 +70,17 @@ class GenreControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void testSaveWhenHttpStatusForbidden() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		mockMvc.perform(post("/genres")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(genreDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void testSaveWhenHttpStatusBadRequest() throws Exception {
 		mockMvc.perform(post("/genres")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -120,6 +134,7 @@ class GenreControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenHttpStatusOk() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		genreDto.setId(GENRE_ID);
@@ -130,6 +145,18 @@ class GenreControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void updateWhenHttpStatusForbidden() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		genreDto.setId(GENRE_ID);
+		mockMvc.perform(put("/genres", genreDto)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(genreDto)))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void updateWhenActorNotFoundException() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		genreDto.setId(NOT_FOUND_GENRE_ID);
@@ -142,6 +169,7 @@ class GenreControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenHttpStatusNoContent() throws Exception {
 		final GenreDto genreDto = createGenreDto();
 		genreService.save(genreDto);
@@ -150,6 +178,16 @@ class GenreControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void deleteByIdWhenHttpStatusForbidden() throws Exception {
+		final GenreDto genreDto = createGenreDto();
+		genreService.save(genreDto);
+		mockMvc.perform(delete("/genres/{id}", 51L))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(delete("/genres/{id}", NOT_FOUND_GENRE_ID)
 						.contentType(MediaType.APPLICATION_JSON))

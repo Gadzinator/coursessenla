@@ -1,9 +1,10 @@
 package com.coursessenla.main.repository.impl;
 
 import com.coursessenla.main.domain.entity.Profile;
-import com.coursessenla.main.domain.entity.Profile_;
+import com.coursessenla.main.domain.entity.Role;
+import com.coursessenla.main.domain.entity.Role_;
 import com.coursessenla.main.repository.AbstractDao;
-import com.coursessenla.main.repository.ProfileRepository;
+import com.coursessenla.main.repository.RoleRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -15,25 +16,25 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public class ProfileRepositoryImpl extends AbstractDao<Profile, Long> implements ProfileRepository {
+public class RoleRepositoryImpl extends AbstractDao<Role, Long> implements RoleRepository {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	protected ProfileRepositoryImpl() {
-		super(Profile.class);
+	protected RoleRepositoryImpl() {
+		super(Role.class);
 	}
 
 	@Override
-	public Optional<Profile> findByName(String name) {
+	public Optional<Role> findByName(String name) {
 		final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		final CriteriaQuery<Profile> criteriaQuery = criteriaBuilder.createQuery(Profile.class);
-		final Root<Profile> root = criteriaQuery.from(Profile.class);
+		final CriteriaQuery<Role> criteriaQuery = criteriaBuilder.createQuery(Role.class);
+		final Root<Role> root = criteriaQuery.from(Role.class);
 		criteriaQuery.select(root);
-		criteriaQuery.where(criteriaBuilder.equal(root.get(Profile_.firstName), name));
+		criteriaQuery.where(criteriaBuilder.equal(root.get(Role_.name), name));
 
 		try {
-			final Profile result = entityManager.createQuery(criteriaQuery).getSingleResult();
+			final Role result = entityManager.createQuery(criteriaQuery).getSingleResult();
 			return Optional.ofNullable(result);
 		} catch (NoResultException e) {
 			return Optional.empty();

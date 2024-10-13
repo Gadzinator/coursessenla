@@ -3,13 +3,13 @@ package com.coursessenla.main.controller;
 import com.coursessenla.main.config.HibernateConfig;
 import com.coursessenla.main.config.LiquibaseConfig;
 import com.coursessenla.main.controller.config.WebMvcConfig;
-import com.coursessenla.main.domain.dto.RegistrationUserDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,7 +23,6 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,39 +36,19 @@ class UserControllerTest {
 	private static final long USER_ID = 1;
 	private static final long NOT_FOUND_USER_ID = 52;
 	private final static String USER_EMAIL = "client1@example.com";
-	private static final String USER_PASSWORD = "password1";
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
 	private MockMvc mockMvc;
 
-	@Autowired
-	private ObjectMapper objectMapper;
-
 	@BeforeEach
 	void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).apply((SecurityMockMvcConfigurers.springSecurity())).build();
 	}
 
 	@Test
-	void testCreateNewUserWhenHttpStatusCreated() throws Exception {
-		final RegistrationUserDto registrationUserDto = createRegistrationUserDto();
-		mockMvc.perform(post("/users")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(registrationUserDto)))
-				.andExpect(status().isCreated());
-	}
-
-	@Test
-	void testSaveWhenHttpStatusBadRequest() throws Exception {
-		mockMvc.perform(post("/users")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(null)))
-				.andExpect(status().isBadRequest());
-	}
-
-	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByIdWhenHttpStatusOk() throws Exception {
 		mockMvc.perform(get("/users/id/{id}", USER_ID))
 				.andExpect(status().isOk())
@@ -78,6 +57,13 @@ class UserControllerTest {
 	}
 
 	@Test
+	void findByIdWhenHttpStatusUnauthorized() throws Exception {
+		mockMvc.perform(get("/users/id/{id}", USER_ID))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(get("/users/id/{id}", NOT_FOUND_USER_ID))
 				.andExpect(status().isNotFound())
@@ -86,6 +72,7 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByEmailWhenHttpStatusOk() throws Exception {
 		mockMvc.perform(get("/users/{email}", USER_EMAIL))
 				.andExpect(status().isOk())
@@ -95,6 +82,13 @@ class UserControllerTest {
 	}
 
 	@Test
+	void findByEmailWhenHttpStatusUnauthorized() throws Exception {
+		mockMvc.perform(get("/users/{email}", USER_EMAIL))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findByEMailWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(get("/users/{email}", NOT_FOUND_USER_ID))
 				.andExpect(status().isNotFound())
@@ -103,6 +97,7 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
 	void findAllWhenHttpStatusOk() throws Exception {
 		mockMvc.perform(get("/users")
 						.contentType(MediaType.APPLICATION_JSON))
@@ -114,28 +109,33 @@ class UserControllerTest {
 	}
 
 	@Test
+	void findAllWhenHttpStatusUnauthorized() throws Exception {
+		mockMvc.perform(get("/users")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenHttpStatusNoContent() throws Exception {
 		mockMvc.perform(delete("/users/{id}", USER_ID))
 				.andExpect(status().isNoContent());
 	}
 
 	@Test
+	@WithMockUser(username = "Alex", roles = "USER")
+	void deleteByIdWhenHttpStatusForbidden() throws Exception {
+		mockMvc.perform(delete("/users/{id}", USER_ID))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	@WithMockUser(username = "Alex", roles = "ADMIN")
 	void deleteByIdWhenActorNotFoundException() throws Exception {
 		mockMvc.perform(delete("/users/{id}", NOT_FOUND_USER_ID)
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound())
 				.andExpect(result -> assertEquals("User with id " + NOT_FOUND_USER_ID + " was not found",
 						Objects.requireNonNull(Objects.requireNonNull(result.getResolvedException()).getMessage())));
-	}
-
-	private RegistrationUserDto createRegistrationUserDto() {
-		RegistrationUserDto registrationUserDto = new RegistrationUserDto();
-		registrationUserDto.setFirstName("Pushkin");
-		registrationUserDto.setLastName("Aleksandr");
-		registrationUserDto.setPassword(USER_PASSWORD);
-		registrationUserDto.setConfirmPassword(USER_PASSWORD);
-		registrationUserDto.setEmail(USER_EMAIL);
-
-		return registrationUserDto;
 	}
 }
