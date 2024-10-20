@@ -63,17 +63,18 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public UserDetails loadUserByUsername(String username) {
 		log.info("Starting method loadUserByUsername: {}", username);
-		final Optional<Profile> optionalProfile = profileRepository.findByName(username);
-		if (optionalProfile.isEmpty()) {
-			log.error("User '{}' not found", username);
-			throw new UsernameNotFoundException(String.format("User '%s' not found", username));
-		}
-		final Profile profile = optionalProfile.get();
-		final User user = profile.getUser();
-		if (user == null) {
-			log.error("User '{}' not found in profile.", username);
-			throw new UsernameNotFoundException(String.format("User '%s' not found in profile.", username));
-		}
+
+		final Profile profile = profileRepository.findByName(username)
+				.orElseThrow(() -> {
+					log.error("User '{}' not found", username);
+					return new UsernameNotFoundException(String.format("User '%s' not found", username));
+				});
+
+		final User user = Optional.ofNullable(profile.getUser())
+				.orElseThrow(() -> {
+					log.error("User '{}' not found in profile.", username);
+					return new UsernameNotFoundException(String.format("User '%s' not found in profile.", username));
+				});
 
 		final org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(
 				profile.getFirstName(),
