@@ -1,16 +1,11 @@
 package com.coursessenla.main.mapper;
 
-import org.hibernate.collection.spi.PersistentBag;
-import org.hibernate.collection.spi.PersistentCollection;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class GenericMapperImpl implements GenericMapper {
 

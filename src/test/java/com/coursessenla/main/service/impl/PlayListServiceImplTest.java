@@ -2,7 +2,6 @@ package com.coursessenla.main.service.impl;
 
 import com.coursessenla.main.domain.dto.PlayListDto;
 import com.coursessenla.main.domain.entity.Playlist;
-import com.coursessenla.main.exception.MovieNotFoundException;
 import com.coursessenla.main.exception.PlayListNotFoundException;
 import com.coursessenla.main.mapper.GenericMapperImpl;
 import com.coursessenla.main.repository.impl.PlayListRepositoryImpl;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
