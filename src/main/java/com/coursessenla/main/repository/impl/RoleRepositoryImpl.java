@@ -1,6 +1,5 @@
 package com.coursessenla.main.repository.impl;
 
-import com.coursessenla.main.domain.entity.Profile;
 import com.coursessenla.main.domain.entity.Role;
 import com.coursessenla.main.domain.entity.Role_;
 import com.coursessenla.main.repository.AbstractDao;
