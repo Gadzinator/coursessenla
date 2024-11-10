@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Transactional
 	@Override
-	public String createAuthToken(JwtRequest authRequest) {
+	public String  createAuthToken(JwtRequest authRequest) {
 		log.info("Starting method createAuthToken: {}", authRequest);
 		UserDetails userDetails = loadUserByUsername(authRequest.getUsername());
 		if (!passwordEncoder.matches(authRequest.getPassword(), userDetails.getPassword())) {
